@@ -165,7 +165,6 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
         addNewImage()
         buttonsInsertImage[myButtonTag].setImage(nil, for: .normal)
         buttonsInsertImage[myButtonTag].backgroundColor = .red
-        buttonsInsertImage[myButtonTag].isHidden = true
     }
     
 

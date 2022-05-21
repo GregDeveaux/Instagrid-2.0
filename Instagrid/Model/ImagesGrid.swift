@@ -8,17 +8,17 @@
 import Foundation
 import UIKit
 
+    // differente possible template on Instagrid
+enum Template {
+    case oneUpTwoBottom
+    case twoUpOneBottom
+    case twoUpTwoBottom
+}
+
 class InstaGrid {
     
         // whole possible images for grid
     var imagesForGrid: [UIImage] = []
-    
-        // differente possible template on Instagrid
-    enum Template {
-        case oneUpTwoBottom
-        case twoUpOneBottom
-        case twoUpTwoBottom
-    }
     
         // current activity
     enum State {
