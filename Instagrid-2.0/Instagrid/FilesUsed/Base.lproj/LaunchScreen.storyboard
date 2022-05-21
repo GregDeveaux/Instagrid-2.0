@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="20037" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" launchScreen="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="01J-lp-oVM">
+    <device id="retina6_1" orientation="portrait" appearance="light"/>
+    <dependencies>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="20020"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="System colors in document resources" minToolsVersion="11.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <scenes>
+        <!--View Controller-->
+        <scene sceneID="EHf-IW-A2E">
+            <objects>
+                <viewController id="01J-lp-oVM" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="Ze5-6b-2t3">
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" image="BackgroundLaunchScreen" translatesAutoresizingMaskIntoConstraints="NO" id="L0P-L0-7v6">
+                                <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
+                            </imageView>
+                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" image="LogoInstagrid" translatesAutoresizingMaskIntoConstraints="NO" id="5Sk-te-R6K">
+                                <rect key="frame" x="57" y="298" width="300" height="300"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="300" id="6zS-vu-uJS"/>
+                                    <constraint firstAttribute="height" constant="300" id="IPu-Jf-TJv"/>
+                                </constraints>
+                            </imageView>
+                        </subviews>
+                        <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                        <constraints>
+                            <constraint firstItem="L0P-L0-7v6" firstAttribute="top" secondItem="Ze5-6b-2t3" secondAttribute="top" id="1gg-si-lay"/>
+                            <constraint firstItem="L0P-L0-7v6" firstAttribute="centerY" secondItem="Ze5-6b-2t3" secondAttribute="centerY" id="3jZ-QT-z3x"/>
+                            <constraint firstItem="5Sk-te-R6K" firstAttribute="centerY" secondItem="Ze5-6b-2t3" secondAttribute="centerY" id="Nsu-rf-eIC"/>
+                            <constraint firstAttribute="bottom" secondItem="L0P-L0-7v6" secondAttribute="bottom" id="a1S-I9-EMk"/>
+                            <constraint firstAttribute="trailing" secondItem="L0P-L0-7v6" secondAttribute="trailing" id="fRt-vt-U4Z"/>
+                            <constraint firstItem="5Sk-te-R6K" firstAttribute="centerX" secondItem="Ze5-6b-2t3" secondAttribute="centerX" id="n0a-GO-TrD"/>
+                            <constraint firstItem="L0P-L0-7v6" firstAttribute="centerX" secondItem="Ze5-6b-2t3" secondAttribute="centerX" id="s7T-dV-g2F"/>
+                            <constraint firstItem="L0P-L0-7v6" firstAttribute="leading" secondItem="Ze5-6b-2t3" secondAttribute="leading" id="yun-an-qyL"/>
+                        </constraints>
+                    </view>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="iYj-Kq-Ea1" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="53" y="375"/>
+        </scene>
+    </scenes>
+    <resources>
+        <image name="BackgroundLaunchScreen" width="428" height="926"/>
+        <image name="LogoInstagrid" width="768" height="768"/>
+        <systemColor name="systemBackgroundColor">
+            <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+        </systemColor>
+    </resources>
+</document>
