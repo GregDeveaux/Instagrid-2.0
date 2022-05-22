@@ -30,8 +30,10 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
         
         // add identical buttons and identical images view of the grid
     @IBOutlet var buttonsInsertImage: [UIButton]!
-    @IBOutlet var imagesAdded: [UIImageView]!
-    
+    @IBOutlet weak var imageUpLeft: UIImageView!
+    @IBOutlet weak var imageUpRight: UIImageView!
+    @IBOutlet weak var imageBottomLeft: UIImageView!
+    @IBOutlet weak var imageBottomRight: UIImageView!
     
         // add the global view grid
     @IBOutlet weak var viewGrid: UIView!
@@ -84,21 +86,28 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
         instaGrid.newGrid()
         
             // add round corner for all the UIImageView
-        imagesAdded.forEach {
-            $0.layer.masksToBounds = true
-            $0.layer.cornerRadius = 5
-            $0.contentMode = .scaleAspectFill
+        roundCorner(imageUpLeft)
+        roundCorner(imageUpRight)
+        roundCorner(imageBottomLeft)
+        roundCorner(imageBottomRight)
+
+            // activate swipe up than the image grid is completed
+        if traitCollection.horizontalSizeClass == .regular && traitCollection.verticalSizeClass == .compact {
+            let swipeLeft = UISwipeGestureRecognizer(target: self, action: #selector(swipeGesture(_:)))
+            swipeLeft.direction = .left
+            self.view.addGestureRecognizer(swipeLeft)
+            swipeLabel.text = "Swipe left to share"
+        } else if traitCollection.horizontalSizeClass == .compact && traitCollection.verticalSizeClass == .compact {
+            let swipeUp = UISwipeGestureRecognizer(target: self, action: #selector(swipeGesture(_:)))
+            swipeUp.direction = .up
+            self.view.addGestureRecognizer(swipeUp)
+            swipeLabel.text = "Swipe up to share"
         }
         
-        // activate swipe up than the image grid is completed
-        let swipeUp = UISwipeGestureRecognizer(target: self, action: #selector(swipeGesture(_:)))
-        swipeUp.direction = .up
-        self.view.addGestureRecognizer(swipeUp)
-       
-        let swipeLeft = UISwipeGestureRecognizer(target: self, action: #selector(swipeGesture(_:)))
-        swipeLeft.direction = .left
-        self.view.addGestureRecognizer(swipeLeft)
-        
+        // swipe for edit background color
+        let swipeRight = UISwipeGestureRecognizer(target: self, action: #selector(swipeGesture(_:)))
+        swipeRight.direction = .right
+        self.view.addGestureRecognizer(swipeRight)
     }
     
     // tap one of three buttons to modify the template
@@ -118,6 +127,12 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
         buttonTemplateToCheck(name: buttonTwoUpTwoBottom, image1: "Layout-1.png", image2: "Layout-2.png", image3: "Layout-3-check.png")
     }
     
+    // round corner the UIImageView
+    func roundCorner(_ image: UIImageView) {
+        image.layer.masksToBounds = true
+        image.layer.cornerRadius = 5
+        image.contentMode = .scaleAspectFill
+    }
     
         // animate buttons template with check
     func buttonTemplateToCheck(name button: UIButton, image1: String, image2: String, image3: String) {
@@ -137,7 +152,7 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
     
     
     
-    // animate with rotation and alpha the Instagrid logo
+        // animate with rotation and alpha the Instagrid logo
     func logoInstagridRotation() {
         
         let rotationTransform = CGAffineTransform(rotationAngle: 180)
@@ -150,18 +165,25 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
             self.logoInstagrid.alpha = 0
             self.backgroundGradient.alpha = 0
         })
-        
     }
-    
-    // edit swipe label text
-    
-   
+
     @IBAction func touchToInsertImage(_ sender: UIButton) {
         let myButtonTag = sender.tag
         print(sender.tag)
-        print(myButtonTag)
-        editingImage = imagesAdded[myButtonTag]
+        switch myButtonTag {
+            case 0:
+                editingImage = imageUpLeft
+            case 1:
+                editingImage = imageUpRight
+            case 2:
+                editingImage = imageBottomLeft
+            case 3:
+                editingImage = imageBottomRight
+            default:
+                print("no photo")
+        }
         addNewImage()
+        print(myButtonTag)
         buttonsInsertImage[myButtonTag].setImage(UIImage(named: "empty"), for: .normal)
     }
     
@@ -205,15 +227,15 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
     
     // call the UIActivityViewController to share the grid
     @objc func swipeGesture(_ gesture: UISwipeGestureRecognizer) {
-        if gesture.direction == .up {
+        if gesture.direction == .up || gesture.direction == .left {
             let imageToShare = viewGrid.screenshot()
             print("to infinity and beyond! Up up up, share the photo")
             let shareController = UIActivityViewController(activityItems: [imageToShare], applicationActivities: nil)
             present(shareController, animated: true, completion: nil)
         }
         
-        else if gesture.direction == .left {
-            print("Left ]->[")
+        else if gesture.direction == .right {
+            print("Right ]<-[ color")
             selectorColorForBorderFrame()
         }
     }
