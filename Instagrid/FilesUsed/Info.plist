@@ -4,10 +4,6 @@
 <dict>
 	<key>Privacy - Photo Library Additions Usage Description </key>
 	<string>Save your Instagrid</string>
-	<key>NSCameraUsageDescription</key>
-	<string>Add a photo into app by camera</string>
-	<key>NSPhotoLibraryUsageDescription</key>
-	<string>Add a photo into app by gallery</string>
 	<key>UIAppFonts</key>
 	<array>
 		<string>ThirstySoftRegular.otf</string>

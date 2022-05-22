@@ -22,12 +22,16 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
         // create a new Instagrid
     var instaGrid = InstaGrid()
     
+        //add swipe label
+    @IBOutlet weak var swipeLabel: UILabel!
+    
         // create a new image view for the grid
     var editingImage: UIImageView!
         
         // add identical buttons and identical images view of the grid
     @IBOutlet var buttonsInsertImage: [UIButton]!
     @IBOutlet var imagesAdded: [UIImageView]!
+    
     
         // add the global view grid
     @IBOutlet weak var viewGrid: UIView!
@@ -101,12 +105,12 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
     @IBAction func templateOneUpTwoBottom(_ sender: UIButton) {
         deletedViewUp.isHidden = true
         deletedViewBottom.isHidden = false
-        buttonTemplateToCheck(name: buttonOneUpTwoBottom,image1: "Layout-1-check.png", image2: "Layout-2.png", image3: "Layout-3-check.png")
+        buttonTemplateToCheck(name: buttonOneUpTwoBottom,image1: "Layout-1-check.png", image2: "Layout-2.png", image3: "Layout-3.png")
     }
     @IBAction func templateTwoUpOneBottom(_ sender: UIButton) {
         deletedViewUp.isHidden = false
         deletedViewBottom.isHidden = true
-        buttonTemplateToCheck(name: buttonTwoUpOneBottom,image1: "Layout-1.png", image2: "Layout-2-check.png", image3: "Layout-3-check.png")
+        buttonTemplateToCheck(name: buttonTwoUpOneBottom,image1: "Layout-1.png", image2: "Layout-2-check.png", image3: "Layout-3.png")
     }
     @IBAction func templateTwoUpTwoBottom(_ sender: UIButton) {
         deletedViewUp.isHidden = false
@@ -115,7 +119,7 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
     }
     
     
-    // animate buttons template with check
+        // animate buttons template with check
     func buttonTemplateToCheck(name button: UIButton, image1: String, image2: String, image3: String) {
         buttonFrontBack(name: button, imageCheck: image1)
         buttonFrontBack(name: button, imageCheck: image2)
@@ -125,17 +129,10 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
 //        buttonTwoUpTwoBottom.setImage(UIImage(named: image3), for: .normal)
     }
     
-    
-    func buttonFrontBack (name button: UIButton, imageCheck: String) {
-            let pushAndMove = CASpringAnimation(keyPath: "transform.scale")
-            pushAndMove.duration = 0.2
-            pushAndMove.autoreverses = true
-            pushAndMove.damping = 1
-            pushAndMove.initialVelocity = 0.3
-            
-            button.layer.add(pushAndMove, forKey: nil)
+    // animation button template
+    func buttonFrontBack(name button: UIButton, imageCheck: String) {
             button.setImage(UIImage(named: imageCheck), for: .normal)
-            UIView.transition(with: button, duration: 0.2, options: UIView.AnimationOptions.transitionFlipFromLeft, animations: nil, completion: nil)
+            UIView.transition(with: button, duration: 0.25, options: UIView.AnimationOptions.transitionFlipFromLeft, animations: nil, completion: nil)
         }
     
     
@@ -156,6 +153,8 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
         
     }
     
+    // edit swipe label text
+    
    
     @IBAction func touchToInsertImage(_ sender: UIButton) {
         let myButtonTag = sender.tag
@@ -163,8 +162,7 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
         print(myButtonTag)
         editingImage = imagesAdded[myButtonTag]
         addNewImage()
-        buttonsInsertImage[myButtonTag].setImage(nil, for: .normal)
-        buttonsInsertImage[myButtonTag].backgroundColor = .red
+        buttonsInsertImage[myButtonTag].setImage(UIImage(named: "empty"), for: .normal)
     }
     
 
