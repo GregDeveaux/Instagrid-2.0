@@ -21,6 +21,7 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
     
         // create a new Instagrid
     var instaGrid = InstaGrid()
+    var imageIsLoaded: UIImage!
     
         //add swipe label
     @IBOutlet weak var swipeLabel: UILabel!
@@ -30,8 +31,10 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
         
         // add identical buttons and identical images view of the grid
     @IBOutlet var buttonsInsertImage: [UIButton]!
-    @IBOutlet var imagesAdded: [UIImageView]!
-    
+    @IBOutlet weak var imageUpLeft: UIImageView!
+    @IBOutlet weak var imageUpRight: UIImageView!
+    @IBOutlet weak var imageBottomLeft: UIImageView!
+    @IBOutlet weak var imageBottomRight: UIImageView!
     
         // add the global view grid
     @IBOutlet weak var viewGrid: UIView!
@@ -42,7 +45,7 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
     @IBOutlet weak var buttonTwoUpTwoBottom: UIButton!
     
         // add anime to check as a card
-    var buttonChecked = false
+    var buttonIsChecked = false
     
         // view deleted using templates buttons
     @IBOutlet weak var deletedViewBottom: UIView!
@@ -75,94 +78,153 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        NotificationCenter.default.addObserver(self, selector: #selector(imageLoaded(sender:)), name: .didLoadImage, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(saveImageCompletedGrid), name: .didCompleteGrid, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(displayTheTemplateTwoUpTwoBottom), name: .didChooseTemplateTwoUpTwoBottom, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(displayTheTemplateTwoUpOneBottom), name: .didChooseTemplateTwoUpOneBottom, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(displayTheTemplateOneUpTwoBottom), name: .didChooseTemplateOneUpTwoBottom, object: nil)
+
             // animation logoScreen
         view.addSubview(backgroundGradient)
         view.addSubview(logoInstagrid)
         logoInstagridRotation()
         
-            // create the new instagrid
-        instaGrid.newGrid()
-        
             // add round corner for all the UIImageView
-        imagesAdded.forEach {
-            $0.layer.masksToBounds = true
-            $0.layer.cornerRadius = 5
-            $0.contentMode = .scaleAspectFill
+        roundCorner(imageUpLeft)
+        roundCorner(imageUpRight)
+        roundCorner(imageBottomLeft)
+        roundCorner(imageBottomRight)
+        
+            // swipe for edit background color
+        let swipeRight = UISwipeGestureRecognizer(target: self, action: #selector(swipeGesture(_:)))
+        swipeRight.direction = .right
+        self.view.addGestureRecognizer(swipeRight)
+    }
+    
+    @objc func imageLoaded(sender: UIButton) {
+        UIImage.isLoaded = true
+        instaGrid.addImageInTheGrid(editingImage.image!)
+        buttonsInsertImage[sender.tag].setImage(UIImage(named: "empty"), for: .normal)
+    }
+    
+    @objc func saveImageCompletedGrid() {
+            // activate swipe up than the image grid is completed
+        if traitCollection.horizontalSizeClass == .regular && traitCollection.verticalSizeClass == .compact {
+            let swipeLeft = UISwipeGestureRecognizer(target: self, action: #selector(swipeGesture(_:)))
+            swipeLeft.direction = .left
+            self.view.addGestureRecognizer(swipeLeft)
+            swipeLabel.text = "Swipe left to share"
+        } else if traitCollection.horizontalSizeClass == .compact && traitCollection.verticalSizeClass == .compact {
+            let swipeUp = UISwipeGestureRecognizer(target: self, action: #selector(swipeGesture(_:)))
+            swipeUp.direction = .up
+            self.view.addGestureRecognizer(swipeUp)
+            swipeLabel.text = "Swipe up to share"
         }
-        
-        // activate swipe up than the image grid is completed
-        let swipeUp = UISwipeGestureRecognizer(target: self, action: #selector(swipeGesture(_:)))
-        swipeUp.direction = .up
-        self.view.addGestureRecognizer(swipeUp)
-       
-        let swipeLeft = UISwipeGestureRecognizer(target: self, action: #selector(swipeGesture(_:)))
-        swipeLeft.direction = .left
-        self.view.addGestureRecognizer(swipeLeft)
-        
+        startNewGrid()
+    }
+    
+    @objc func displayTheTemplateTwoUpTwoBottom() {
+        templateTwoUpTwoBottom(buttonTwoUpTwoBottom)
+    }
+    
+    @objc func displayTheTemplateTwoUpOneBottom() {
+        templateTwoUpOneBottom(buttonTwoUpOneBottom)
+    }
+    
+    @objc func displayTheTemplateOneUpTwoBottom() {
+        templateOneUpTwoBottom(buttonOneUpTwoBottom)
     }
     
     // tap one of three buttons to modify the template
     @IBAction func templateOneUpTwoBottom(_ sender: UIButton) {
+        instaGrid.currentTemplate = .oneUpTwoBottom
         deletedViewUp.isHidden = true
         deletedViewBottom.isHidden = false
-        buttonTemplateToCheck(name: buttonOneUpTwoBottom,image1: "Layout-1-check.png", image2: "Layout-2.png", image3: "Layout-3.png")
+        allButtonTemplate()
     }
     @IBAction func templateTwoUpOneBottom(_ sender: UIButton) {
+        instaGrid.currentTemplate = .twoUpOneBottom
         deletedViewUp.isHidden = false
         deletedViewBottom.isHidden = true
-        buttonTemplateToCheck(name: buttonTwoUpOneBottom,image1: "Layout-1.png", image2: "Layout-2-check.png", image3: "Layout-3.png")
+        allButtonTemplate()
     }
     @IBAction func templateTwoUpTwoBottom(_ sender: UIButton) {
+        instaGrid.currentTemplate = .twoUpTwoBottom
         deletedViewUp.isHidden = false
         deletedViewBottom.isHidden = false
-        buttonTemplateToCheck(name: buttonTwoUpTwoBottom, image1: "Layout-1.png", image2: "Layout-2.png", image3: "Layout-3-check.png")
+        allButtonTemplate()
     }
     
+    // round corner the UIImageView
+    func roundCorner(_ image: UIImageView) {
+        image.layer.masksToBounds = true
+        image.layer.cornerRadius = 5
+        image.contentMode = .scaleAspectFill
+    }
     
-        // animate buttons template with check
-    func buttonTemplateToCheck(name button: UIButton, image1: String, image2: String, image3: String) {
-        buttonFrontBack(name: button, imageCheck: image1)
-        buttonFrontBack(name: button, imageCheck: image2)
-        buttonFrontBack(name: button, imageCheck: image3)
-//        buttonOneUpTwoBottom.setImage(UIImage(named: image1), for: .normal)
-//        buttonTwoUpOneBottom.setImage(UIImage(named: image2), for: .normal)
-//        buttonTwoUpTwoBottom.setImage(UIImage(named: image3), for: .normal)
+    func allButtonTemplate() {
+        switch instaGrid.currentTemplate {
+            case .oneUpTwoBottom:
+                buttonFrontBack(name: buttonOneUpTwoBottom, imageCheck: "Layout-1-check")
+                buttonTwoUpOneBottom.setImage(UIImage(named: "Layout-2"), for: .normal)
+                buttonTwoUpTwoBottom.setImage(UIImage(named: "Layout-3"), for: .normal)
+                
+            case .twoUpOneBottom:
+                buttonOneUpTwoBottom.setImage(UIImage(named: "Layout-1"), for: .normal)
+                buttonFrontBack(name: buttonTwoUpOneBottom, imageCheck: "Layout-2-check")
+                buttonTwoUpTwoBottom.setImage(UIImage(named: "Layout-3"), for: .normal)
+
+            case .twoUpTwoBottom:
+                buttonOneUpTwoBottom.setImage(UIImage(named: "Layout-1"), for: .normal)
+                buttonTwoUpOneBottom.setImage(UIImage(named: "Layout-2"), for: .normal)
+                buttonFrontBack(name: buttonTwoUpTwoBottom, imageCheck: "Layout-3-check")
+        }
     }
     
     // animation button template
     func buttonFrontBack(name button: UIButton, imageCheck: String) {
             button.setImage(UIImage(named: imageCheck), for: .normal)
             UIView.transition(with: button, duration: 0.25, options: UIView.AnimationOptions.transitionFlipFromLeft, animations: nil, completion: nil)
-        }
+    }
     
-    
-    
-    // animate with rotation and alpha the Instagrid logo
+        // animate with rotation and alpha the Instagrid logo
     func logoInstagridRotation() {
-        
+            // integrate a rotation of 180°
         let rotationTransform = CGAffineTransform(rotationAngle: 180)
         
+            // animate the logo with rebound
         UIImageView.animate(withDuration: 2, delay: 0.8, usingSpringWithDamping: 0.2, initialSpringVelocity: 0.1, animations: {
             self.logoInstagrid.transform = rotationTransform
         })
                 
+        // then, the fake launchscreen disappears
         UIImageView.animate(withDuration: 0.5, delay: 2.2, animations: {
             self.logoInstagrid.alpha = 0
             self.backgroundGradient.alpha = 0
         })
-        
     }
-    
-    // edit swipe label text
-    
-   
+
     @IBAction func touchToInsertImage(_ sender: UIButton) {
         let myButtonTag = sender.tag
         print(sender.tag)
-        print(myButtonTag)
-        editingImage = imagesAdded[myButtonTag]
+        switch myButtonTag {
+            case 0:
+                editingImage = imageUpLeft
+                print("imageUpLeft")
+            case 1:
+                editingImage = imageUpRight
+                print("imageUpRight")
+            case 2:
+                editingImage = imageBottomLeft
+                print("imageBottomLeft")
+            case 3:
+                editingImage = imageBottomRight
+                print("imageBottomRight")
+            default:
+                print("no photo")
+        }
         addNewImage()
-        buttonsInsertImage[myButtonTag].setImage(UIImage(named: "empty"), for: .normal)
+        print(myButtonTag)
     }
     
 
@@ -205,15 +267,17 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
     
     // call the UIActivityViewController to share the grid
     @objc func swipeGesture(_ gesture: UISwipeGestureRecognizer) {
-        if gesture.direction == .up {
+        // if swipe up or left share the instagrid and begin a new grid
+        if gesture.direction == .up || gesture.direction == .left {
             let imageToShare = viewGrid.screenshot()
             print("to infinity and beyond! Up up up, share the photo")
             let shareController = UIActivityViewController(activityItems: [imageToShare], applicationActivities: nil)
             present(shareController, animated: true, completion: nil)
+            startNewGrid()
         }
         
-        else if gesture.direction == .left {
-            print("Left ]->[")
+        else if gesture.direction == .right {
+            print("Right ]<-[ color")
             selectorColorForBorderFrame()
         }
     }
@@ -227,6 +291,11 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
     func colorPickerViewControllerDidFinish(_ viewController: UIColorPickerViewController) {
         let color = viewController.selectedColor
         viewGrid.backgroundColor = color
+    }
+    
+    // sstart new grid after share the sreenshot template with the swipe
+    private func startNewGrid() {
+        instaGrid.newGrid()
     }
 
 }
