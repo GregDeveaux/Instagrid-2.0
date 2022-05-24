@@ -15,14 +15,14 @@ enum Template {
     case twoUpTwoBottom
 }
 
-extension UIImage {
+extension UIImageView {
     static var isLoaded = false
 }
 
 class InstaGrid {
     
         // whole possible images for grid
-    var imagesForGrid: [UIImage] = []
+    var imagesForGrid: [UIImageView] = []
     
         // current activity
     enum State {
@@ -31,8 +31,8 @@ class InstaGrid {
     }
     
         // we begin the grid
-    var currentTemplate: Template = .oneUpTwoBottom
-    var totalImagesMaxForTemplate = 3
+    var currentTemplate: Template = .twoUpTwoBottom
+    var totalImagesMaxForTemplate = 4
     
         // initial background color for restart (hidden bonus : swipe left to change color)
     var backgroundColorOfTHeFrame = #colorLiteral(red: 0.05632288009, green: 0.396702528, blue: 0.5829991102, alpha: 1)
@@ -59,8 +59,7 @@ class InstaGrid {
         }
     }
     
-    
-    func addImageInTheGrid(_ image: UIImage) {
+    func addImageInTheGrid(_ image: UIImageView) {
         imagesForGrid.append(image)
         NotificationCenter.default.post(name: .didLoadImage, object: nil)
     }
@@ -69,7 +68,7 @@ class InstaGrid {
     func newGrid() {
         imagesForGrid.removeAll()
         currentTemplate = .twoUpTwoBottom
-        totalImagesMaxForTemplate = 3
+        totalImagesMaxForTemplate = 4
         backgroundColorOfTHeFrame = #colorLiteral(red: 0.05632288009, green: 0.396702528, blue: 0.5829991102, alpha: 1)
         state = .inProgress
     }

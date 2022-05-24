@@ -21,7 +21,6 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
     
         // create a new Instagrid
     var instaGrid = InstaGrid()
-    var imageIsLoaded: UIImage!
     
         //add swipe label
     @IBOutlet weak var swipeLabel: UILabel!
@@ -102,8 +101,7 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
     }
     
     @objc func imageLoaded(sender: UIButton) {
-        UIImage.isLoaded = true
-        instaGrid.addImageInTheGrid(editingImage.image!)
+        UIImageView.isLoaded = true
         buttonsInsertImage[sender.tag].setImage(UIImage(named: "empty"), for: .normal)
     }
     
@@ -225,6 +223,7 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
         }
         addNewImage()
         print(myButtonTag)
+        instaGrid.addImageInTheGrid(editingImage)
     }
     
 
