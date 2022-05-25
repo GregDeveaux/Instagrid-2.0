@@ -36,7 +36,7 @@ class InstaGrid {
     var state: State = .inProgress
     
     // we verify that the array content all the possible images for the template
-    func numberLoadedImageMax(currentTemplate: Template) {
+    func numberLoadedImageMax() {
         switch currentTemplate {
             case .oneUpTwoBottom:
                 totalImagesMaxForTemplate = 3
@@ -52,9 +52,10 @@ class InstaGrid {
         }
     }
     
+    // add image in the grid and check that it is completely loaded (then hide the button +)
     func addImageInTheGrid(_ image: UIImageView) {
         imagesForGrid.append(image)
-//        NotificationCenter.default.post(name: .didLoadImage, object: nil)
+        NotificationCenter.default.post(name: .didLoadImage, object: nil)
     }
     
     // after the swipe, we again begin the new images grid

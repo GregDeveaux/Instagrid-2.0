@@ -82,6 +82,10 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
         logoInstagridRotation()
         
         instaGrid.newGrid()
+        
+            // add button active of the first grid
+        buttonFrontBack(name: buttonTwoUpTwoBottom, imageCheck: "Layout-3-check")
+        
             // add round corner for all the UIImageView
         roundCorner(imageUpLeft)
         roundCorner(imageUpRight)
@@ -92,6 +96,8 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
         let swipeRight = UISwipeGestureRecognizer(target: self, action: #selector(swipeGestureColor(_:)))
         swipeRight.direction = .right
         self.view.addGestureRecognizer(swipeRight)
+        
+        saveImageCompletedGrid()
     }
     
         // start new grid after share the screenshot template with the swipe
@@ -104,7 +110,7 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
     }
     
     @objc func saveImageCompletedGrid() {
-        guard instaGrid.state == .completed else {return}
+        guard instaGrid.state == .completed else { return }
             // activate swipe up than the image grid is completed
 //        if traitCollection.horizontalSizeClass == .compact && traitCollection.verticalSizeClass == .regular {
             let swipeLeft = UISwipeGestureRecognizer(target: self, action: #selector(swipeGestureShare(_:)))
@@ -127,31 +133,30 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
         // tap one of three buttons to modify the template
     @IBAction func templateOneUpTwoBottom(_ sender: UIButton) {
         instaGrid.currentTemplate = .oneUpTwoBottom
-        deletedViewUp.isHidden = true
-        deletedViewBottom.isHidden = false
         allButtonTemplate()
     }
     @IBAction func templateTwoUpOneBottom(_ sender: UIButton) {
         instaGrid.currentTemplate = .twoUpOneBottom
-        deletedViewUp.isHidden = false
-        deletedViewBottom.isHidden = true
         allButtonTemplate()
     }
     @IBAction func templateTwoUpTwoBottom(_ sender: UIButton) {
         instaGrid.currentTemplate = .twoUpTwoBottom
-        deletedViewUp.isHidden = false
-        deletedViewBottom.isHidden = false
         allButtonTemplate()
     }
     
     func allButtonTemplate() {
+        deletedViewUp.isHidden = false
+        deletedViewBottom.isHidden = false
+        
         switch instaGrid.currentTemplate {
             case .oneUpTwoBottom:
+                deletedViewUp.isHidden = true
                 buttonFrontBack(name: buttonOneUpTwoBottom, imageCheck: "Layout-1-check")
                 buttonTwoUpOneBottom.setImage(UIImage(named: "Layout-2"), for: .normal)
                 buttonTwoUpTwoBottom.setImage(UIImage(named: "Layout-3"), for: .normal)
                 
             case .twoUpOneBottom:
+                deletedViewBottom.isHidden = true
                 buttonOneUpTwoBottom.setImage(UIImage(named: "Layout-1"), for: .normal)
                 buttonFrontBack(name: buttonTwoUpOneBottom, imageCheck: "Layout-2-check")
                 buttonTwoUpTwoBottom.setImage(UIImage(named: "Layout-3"), for: .normal)
@@ -161,6 +166,7 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
                 buttonTwoUpOneBottom.setImage(UIImage(named: "Layout-2"), for: .normal)
                 buttonFrontBack(name: buttonTwoUpTwoBottom, imageCheck: "Layout-3-check")
         }
+        instaGrid.numberLoadedImageMax()
     }
     
         // animation button template
@@ -301,6 +307,7 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
             // add new image in the array
         instaGrid.addImageInTheGrid(editingImage)
         print("image camera added")
+        print(instaGrid.imagesForGrid)
         
         dismiss(animated: true)
     }
@@ -325,6 +332,7 @@ extension ViewController: PHPickerViewControllerDelegate {
                         // add new image in the array
                     self.instaGrid.addImageInTheGrid(self.editingImage)
                     print("image library added")
+                    print(self.instaGrid.imagesForGrid)
                 }
             }
         }
