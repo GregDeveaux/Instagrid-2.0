@@ -12,5 +12,3 @@ struct ImageIsLoaded {
     var name = ""
     var isLoaded = false
 }
-
-
