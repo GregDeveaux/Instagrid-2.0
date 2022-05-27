@@ -70,8 +70,23 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate,
         let pickerPH = PHPickerViewController(configuration: configuration)
             // picker delegate for PHPickerView want the messages to come this class
         pickerPH.delegate = self
+        if let sheet = pickerPH.sheetPresentationController {
+                // open sheet until the middle screen or whole screen
+            sheet.detents = [.medium(), .large()]
+            sheet.preferredCornerRadius = 30
+        }
         return pickerPH
     }
+
+    override func viewDidAppear(_ animated: Bool) {
+          super.viewDidAppear(animated)
+          print("Horizontal size class: \(traitCollection.horizontalSizeClass)")
+          print("Vertical size class: \(traitCollection.verticalSizeClass)")
+      }
+    override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
+         super.traitCollectionDidChange(previousTraitCollection)
+         print("+++++++++++++++++++++++++++++++++++++Trait collection changed; size classes may be different.")
+     }
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -97,17 +112,7 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate,
         swipeRight.direction = .right
         self.view.addGestureRecognizer(swipeRight)
 
-        if instaGrid.didCompleteGrid {
-            let swipeLeft = UISwipeGestureRecognizer(target: self, action: #selector(swipeGestureShare(_:)))
-            swipeLeft.direction = .left
-            self.view.addGestureRecognizer(swipeLeft)
-            swipeLabel.text = "Swipe left to share"
-        } else {
-            let swipeUp = UISwipeGestureRecognizer(target: self, action: #selector(swipeGestureShare(_:)))
-            swipeUp.direction = .up
-            self.view.addGestureRecognizer(swipeUp)
-            swipeLabel.text = "Swipe up to share"
-        }
+        shareTheInstagrid()
 
     }
 
@@ -122,19 +127,21 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate,
 
         // swipe and save the grid (swipe up or swipe left according to orientation portrait or lanscape)
     func shareTheInstagrid() {
-        let swipeLeft = UISwipeGestureRecognizer(target: self, action: #selector(swipeGestureShare(_:)))
-        swipeLeft.direction = .left
-        self.view.addGestureRecognizer(swipeLeft)
-        swipeLabel.text = "Swipe left to share"
-            // activate swipe up than the image grid is completed
-            //        if traitCollection.horizontalSizeClass == .compact && traitCollection.verticalSizeClass == .regular {
-        
-            //        } else if traitCollection.horizontalSizeClass == .compact && traitCollection.verticalSizeClass == .compact {
-            //            let swipeUp = UISwipeGestureRecognizer(target: self, action: #selector(swipeGestureShare(_:)))
-            //            swipeUp.direction = .up
-            //            self.view.addGestureRecognizer(swipeUp)
-            //            swipeLabel.text = "Swipe up to share"
-            //        }
+        let orientation: UITraitCollection = .current
+//        activate swipe up than the image grid is completed
+        if orientation.verticalSizeClass == .compact && orientation.horizontalSizeClass == .regular {
+            let swipeLeft = UISwipeGestureRecognizer(target: self, action: #selector(swipeGestureShare(_:)))
+            swipeLeft.direction = .left
+            self.view.addGestureRecognizer(swipeLeft)
+            swipeLabel.text = "Swipe left to share"
+            dismiss(animated: true)
+        } else if orientation.verticalSizeClass == .compact && orientation.horizontalSizeClass == .regular {
+            let swipeUp = UISwipeGestureRecognizer(target: self, action: #selector(swipeGestureShare(_:)))
+            swipeUp.direction = .up
+            self.view.addGestureRecognizer(swipeUp)
+            swipeLabel.text = "Swipe up to share"
+            dismiss(animated: true)
+        }
         startNewGrid()
     }
 
@@ -268,12 +275,11 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate,
         // swipe gesture to share the grid
     @objc func swipeGestureShare(_ gesture: UISwipeGestureRecognizer) {
             // if swipe up or left share the instagrid and begin a new grid
-        if gesture.direction == .up || gesture.direction == .left {
-            let imageToShare = viewGrid.screenshot()
-            print("to infinity and beyond! Up! (or left) and share the photo")
-            let shareController = UIActivityViewController(activityItems: [imageToShare], applicationActivities: nil)
-            present(shareController, animated: true, completion: nil)
-            startNewGrid()
+            if gesture.direction == .up || gesture.direction == .left {
+                let imageToShare = viewGrid.screenshot()
+                print("to infinity and beyond! Up! (or left) and share the photo")
+                let shareController = UIActivityViewController(activityItems: [imageToShare], applicationActivities: nil)
+                present(shareController, animated: true, completion: nil)
         }
     }
 
@@ -343,7 +349,7 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate,
     }
 
     func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
-            // if that not fonctionnaly, to dismiss the view controller
+            // animate return to the view controller
         dismiss(animated: true)
     }
 }
@@ -351,7 +357,12 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate,
 extension ViewController: PHPickerViewControllerDelegate {
 
     func picker(_ picker: PHPickerViewController, didFinishPicking results: [PHPickerResult]) {
-        picker.dismiss(animated: true)
+
+        if let sheet = pickerPH.sheetPresentationController {
+            sheet.animateChanges {
+                sheet.selectedDetentIdentifier = .medium
+            }
+        }
 
         if let itemProvider = results.first?.itemProvider, itemProvider.canLoadObject(ofClass: UIImage.self) {
             let previousImage = editingImage.image
@@ -369,6 +380,7 @@ extension ViewController: PHPickerViewControllerDelegate {
                 }
             }
         }
+        dismiss(animated: true)
     }
 }
 
