@@ -22,6 +22,7 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate,
 
         // create a Instagrid
     var instaGrid = InstaGrid()
+    var currentIndex = 0
 
         // create a new image view for the grid
     var editingImage: UIImageView!
@@ -70,6 +71,7 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate,
         let pickerPH = PHPickerViewController(configuration: configuration)
             // picker delegate for PHPickerView want the messages to come this class
         pickerPH.delegate = self
+            // add properties to the sheet
         if let sheet = pickerPH.sheetPresentationController {
                 // open sheet until the middle screen or whole screen
             sheet.detents = [.medium(), .large()]
@@ -78,15 +80,12 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate,
         return pickerPH
     }
 
-    override func viewDidAppear(_ animated: Bool) {
-          super.viewDidAppear(animated)
-          print("Horizontal size class: \(traitCollection.horizontalSizeClass)")
-          print("Vertical size class: \(traitCollection.verticalSizeClass)")
-      }
+        // we use override method to change layout and swipe orientation
     override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
-         super.traitCollectionDidChange(previousTraitCollection)
-         print("+++++++++++++++++++++++++++++++++++++Trait collection changed; size classes may be different.")
-     }
+        super.traitCollectionDidChange(previousTraitCollection)
+        shareTheInstagrid()
+        print("+++++++++++++++++++++++ orientation changed +++++++++++++++++++++++.")
+    }
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -111,9 +110,6 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate,
         let swipeRight = UISwipeGestureRecognizer(target: self, action: #selector(swipeGestureColor(_:)))
         swipeRight.direction = .right
         self.view.addGestureRecognizer(swipeRight)
-
-        shareTheInstagrid()
-
     }
 
         // start new grid after share the screenshot template with the swipe
@@ -127,15 +123,14 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate,
 
         // swipe and save the grid (swipe up or swipe left according to orientation portrait or lanscape)
     func shareTheInstagrid() {
-        let orientation: UITraitCollection = .current
 //        activate swipe up than the image grid is completed
-        if orientation.verticalSizeClass == .compact && orientation.horizontalSizeClass == .regular {
+        if traitCollection.verticalSizeClass == .compact {
             let swipeLeft = UISwipeGestureRecognizer(target: self, action: #selector(swipeGestureShare(_:)))
             swipeLeft.direction = .left
             self.view.addGestureRecognizer(swipeLeft)
             swipeLabel.text = "Swipe left to share"
             dismiss(animated: true)
-        } else if orientation.verticalSizeClass == .compact && orientation.horizontalSizeClass == .regular {
+        } else if traitCollection.verticalSizeClass == .regular {
             let swipeUp = UISwipeGestureRecognizer(target: self, action: #selector(swipeGestureShare(_:)))
             swipeUp.direction = .up
             self.view.addGestureRecognizer(swipeUp)
@@ -243,24 +238,28 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate,
 
     @IBAction func touchToInsertImage(_ sender: UIButton) {
         let myButtonTag = sender.tag
-        print(sender.tag)
+        print("sendeer tag : \(sender.tag)")
         switch myButtonTag {
             case 0:
                 currentNumberButton = 0
+                currentIndex = 0
                 editingImage = imageUpLeft
-                print("imageUpLeft")
+                print("imageUpLeft, index \(currentIndex)")
             case 1:
                 currentNumberButton = 1
+                currentIndex = 1
                 editingImage = imageUpRight
-                print("imageUpRight")
+                print("imageUpRight, index \(currentIndex)")
             case 2:
                 currentNumberButton = 2
+                currentIndex = 2
                 editingImage = imageBottomLeft
-                print("imageBottomLeft")
+                print("imageBottomLeft, index \(currentIndex)")
             case 3:
                 currentNumberButton = 3
+                currentIndex = 3
                 editingImage = imageBottomRight
-                print("imageBottomRight")
+                print("imageBottomRight, index \(currentIndex)")
             default:
                 print("no photo")
         }
@@ -339,8 +338,8 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate,
         editingImage.image = chosenImage
         editingImage.contentMode = .scaleAspectFill
             // add new image in the array
-        instaGrid.addImageInTheGrid(editingImage)
-        print("image camera added")
+        instaGrid.addImageInTheGrid(image: editingImage)
+        print("image camera added in index \(currentIndex)")
         print(instaGrid.imagesForGrid)
         print("number images in grid \(self.instaGrid.imagesForGrid.count)")
         print("complete: \(instaGrid.didCompleteGrid)")
@@ -372,8 +371,8 @@ extension ViewController: PHPickerViewControllerDelegate {
                           self.editingImage.image == previousImage else { return }
                     self.editingImage.image = image
                         // add new image in the array
-                    self.instaGrid.addImageInTheGrid(self.editingImage)
-                    print("image library added")
+                    self.instaGrid.addImageInTheGrid(image: self.editingImage)
+                    print("image library added in index \(self.currentIndex)")
                     print(self.instaGrid.imagesForGrid)
                     print("number images in grid \(self.instaGrid.imagesForGrid.count)")
                     print("complete: \(self.instaGrid.didCompleteGrid)")
