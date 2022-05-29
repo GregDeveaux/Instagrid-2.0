@@ -114,17 +114,16 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate,
 
         // swipe and save the grid (swipe up or swipe left according to orientation portrait or lanscape)
     func swipeShareInstagrid() {
+//        guard instaGrid.didCompleteGrid else { return }
+        let swipeToShare = UISwipeGestureRecognizer(target: self, action: #selector(swipeGestureShare(_:)))
         if traitCollection.verticalSizeClass == .regular {
-            let swipeToShare = UISwipeGestureRecognizer(target: self, action: #selector(swipeGestureShare(_:)))
             swipeToShare.direction = .up
-            self.view.addGestureRecognizer(swipeToShare)
             swipeLabel.text = "Swipe up to share"
         } else if traitCollection.verticalSizeClass == .compact {
-            let swipeToShare = UISwipeGestureRecognizer(target: self, action: #selector(swipeGestureShare(_:)))
             swipeToShare.direction = .left
-            self.view.addGestureRecognizer(swipeToShare)
             swipeLabel.text = "Swipe left to share"
         }
+        self.view.addGestureRecognizer(swipeToShare)
     }
 
         // -------------------------------------------------------
@@ -303,11 +302,11 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate,
     }
 
         // insert image in the grid
-    func insertChosenImage(_ chosenImage: UIImage) {
+    func insertInGrid(the chosenImage: UIImage) {
         editingImage.image = chosenImage
         editingImage.contentMode = .scaleAspectFill
             // add new image in the array
-        instaGrid.addImageInTheGrid(editingImage)
+        instaGrid.addImageInTheGrid(image: editingImage)
         self.currentIndex += 1
         self.removePlusIfImageLoaded(self.numberButtonSelected)
         print("image camera added")
@@ -323,7 +322,7 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate,
             print("No image found")
             return
         }
-        insertChosenImage(chosenImage)
+        insertInGrid(the: chosenImage)
 
         dismiss(animated: true)
     }
@@ -350,7 +349,7 @@ extension ViewController: PHPickerViewControllerDelegate {
                 DispatchQueue.main.sync {
                     guard let self = self, let chosenImage = image as? UIImage,
                           self.editingImage.image == previousImage else { return }
-                    self.insertChosenImage(chosenImage)
+                    self.insertInGrid(the: chosenImage)
                 }
             }
         }
