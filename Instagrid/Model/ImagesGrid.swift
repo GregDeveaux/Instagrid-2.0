@@ -31,7 +31,7 @@ class InstaGrid {
 
         // we verify that the array content all the possible images for the template
     var didCompleteGrid: Bool {
-        imagesForGrid.count == totalImagesMaxForTemplate
+        imagesForGrid.count >= totalImagesMaxForTemplate
     }
 
         // add image in the grid and check that it is completely loaded (then hide the button +)
