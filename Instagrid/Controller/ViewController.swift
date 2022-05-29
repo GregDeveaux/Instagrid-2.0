@@ -78,14 +78,11 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate,
         return pickerPH
     }
 
-    override func viewDidAppear(_ animated: Bool) {
-          super.viewDidAppear(animated)
-          print("Horizontal size class: \(traitCollection.horizontalSizeClass)")
-          print("Vertical size class: \(traitCollection.verticalSizeClass)")
-      }
     override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
-         super.traitCollectionDidChange(previousTraitCollection)
-         print("+++++++++++++++++++++++++++++++++++++Trait collection changed; size classes may be different.")
+        super.traitCollectionDidChange(previousTraitCollection)
+        shareTheInstagrid()
+
+         print("++++++++++++++++++++++++++++++++ Trait collection changed ++++++++++++++++++++++++++++++++")
      }
 
     override func viewDidLoad() {
@@ -113,6 +110,7 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate,
         self.view.addGestureRecognizer(swipeRight)
 
         shareTheInstagrid()
+        print("initial orientation up \(shareTheInstagrid())")
 
     }
 
@@ -127,21 +125,20 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate,
 
         // swipe and save the grid (swipe up or swipe left according to orientation portrait or lanscape)
     func shareTheInstagrid() {
-        let orientation: UITraitCollection = .current
-//        activate swipe up than the image grid is completed
-        if orientation.verticalSizeClass == .compact && orientation.horizontalSizeClass == .regular {
-            let swipeLeft = UISwipeGestureRecognizer(target: self, action: #selector(swipeGestureShare(_:)))
-            swipeLeft.direction = .left
-            self.view.addGestureRecognizer(swipeLeft)
-            swipeLabel.text = "Swipe left to share"
-            dismiss(animated: true)
-        } else if orientation.verticalSizeClass == .compact && orientation.horizontalSizeClass == .regular {
-            let swipeUp = UISwipeGestureRecognizer(target: self, action: #selector(swipeGestureShare(_:)))
-            swipeUp.direction = .up
-            self.view.addGestureRecognizer(swipeUp)
-            swipeLabel.text = "Swipe up to share"
-            dismiss(animated: true)
+        if instaGrid.didCompleteGrid {
+            if traitCollection.verticalSizeClass == .regular && traitCollection.horizontalSizeClass == .compact {
+                let swipeToShare = UISwipeGestureRecognizer(target: self, action: #selector(swipeGestureShare(_:)))
+                swipeToShare.direction = .up
+                self.view.addGestureRecognizer(swipeToShare)
+                swipeLabel.text = "Swipe up to share"
+            } else if traitCollection.verticalSizeClass == .compact && traitCollection.horizontalSizeClass == .regular {
+                let swipeToShare = UISwipeGestureRecognizer(target: self, action: #selector(swipeGestureShare(_:)))
+                swipeToShare.direction = .left
+                self.view.addGestureRecognizer(swipeToShare)
+                swipeLabel.text = "Swipe left to share"
+            }
         }
+            // activate swipe up than the image grid is completed
         startNewGrid()
     }
 
