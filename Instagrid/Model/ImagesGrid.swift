@@ -18,7 +18,7 @@ enum Template {
 class InstaGrid {
 
         // whole possible images for grid
-    var imagesForGrid: [UIImageView] = []
+    var imagesForGrid = [UIImageView]()
     var currentTemplate: Template
     var totalImagesMaxForTemplate: Int
     var backgroundColorOfTHeFrame: UIColor
