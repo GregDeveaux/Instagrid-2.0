@@ -21,7 +21,7 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate,
     let backgroundGradient = UIImageView(image: UIImage(named: "BackgroundLaunchScreen"))
 
         // create a Instagrid
-    var instaGrid = InstaGrid()
+    let instaGrid = InstaGrid()
 
         // create a new image view for the grid
     var editingImage: UIImageView!

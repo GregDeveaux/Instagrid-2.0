@@ -35,7 +35,7 @@ class InstaGrid {
     }
 
         // add image in the grid and check that it is completely loaded (then hide the button +)
-    func addImageInTheGrid(_ image: UIImageView) {
+    func addImageInTheGrid(image: UIImageView) {
         imagesForGrid.append(image)
         NotificationCenter.default.post(name: .didLoadImage, object: nil)
     }
@@ -44,7 +44,6 @@ class InstaGrid {
     func newGrid() {
         imagesForGrid.removeAll()
         currentTemplate = .twoUpTwoBottom
-        totalImagesMaxForTemplate = 4
         backgroundColorOfTHeFrame = #colorLiteral(red: 0.05632288009, green: 0.396702528, blue: 0.5829991102, alpha: 1)
     }
 }
