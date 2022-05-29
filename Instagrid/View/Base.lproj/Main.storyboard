@@ -86,12 +86,12 @@
                                                                                 <rect key="frame" x="0.0" y="0.0" width="130.5" height="130.5"/>
                                                                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                                             </imageView>
-                                                                            <button opaque="NO" contentMode="scaleAspectFill" contentHorizontalAlignment="fill" contentVerticalAlignment="fill" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="5d6-7c-44R">
+                                                                            <button opaque="NO" tag="1" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="5d6-7c-44R">
                                                                                 <rect key="frame" x="0.0" y="0.0" width="130.5" height="130.5"/>
                                                                                 <state key="normal" title="Button"/>
                                                                                 <buttonConfiguration key="configuration" style="plain" image="Plus"/>
                                                                                 <connections>
-                                                                                    <action selector="touchToInsertImage:" destination="BYZ-38-t0r" eventType="touchUpInside" id="KQz-hK-CtJ"/>
+                                                                                    <action selector="touchToInsertImage:" destination="BYZ-38-t0r" eventType="touchUpInside" id="ZF8-cG-8Fg"/>
                                                                                 </connections>
                                                                             </button>
                                                                         </subviews>
@@ -113,12 +113,12 @@
                                                                                 <rect key="frame" x="0.0" y="0.0" width="130.5" height="130.5"/>
                                                                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                                             </imageView>
-                                                                            <button opaque="NO" tag="1" contentMode="scaleAspectFill" contentHorizontalAlignment="fill" contentVerticalAlignment="fill" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="9XE-2M-iys">
+                                                                            <button opaque="NO" tag="2" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="9XE-2M-iys">
                                                                                 <rect key="frame" x="0.0" y="0.0" width="130.5" height="130.5"/>
                                                                                 <state key="normal" title="Button"/>
                                                                                 <buttonConfiguration key="configuration" style="plain" image="Plus"/>
                                                                                 <connections>
-                                                                                    <action selector="touchToInsertImage:" destination="BYZ-38-t0r" eventType="touchUpInside" id="3Zv-Sr-byi"/>
+                                                                                    <action selector="touchToInsertImage:" destination="BYZ-38-t0r" eventType="touchUpInside" id="WDs-AS-pKn"/>
                                                                                 </connections>
                                                                             </button>
                                                                         </subviews>
@@ -145,12 +145,12 @@
                                                                                 <rect key="frame" x="0.0" y="0.0" width="130.5" height="130.5"/>
                                                                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                                             </imageView>
-                                                                            <button opaque="NO" tag="2" contentMode="scaleAspectFill" contentHorizontalAlignment="fill" contentVerticalAlignment="fill" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="WzK-kf-x53">
+                                                                            <button opaque="NO" tag="3" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="WzK-kf-x53">
                                                                                 <rect key="frame" x="0.0" y="0.0" width="130.5" height="130.5"/>
                                                                                 <state key="normal" title="Button"/>
                                                                                 <buttonConfiguration key="configuration" style="plain" image="Plus"/>
                                                                                 <connections>
-                                                                                    <action selector="touchToInsertImage:" destination="BYZ-38-t0r" eventType="touchUpInside" id="ggH-mZ-zLc"/>
+                                                                                    <action selector="touchToInsertImage:" destination="BYZ-38-t0r" eventType="touchUpInside" id="2L7-II-2mF"/>
                                                                                 </connections>
                                                                             </button>
                                                                         </subviews>
@@ -172,12 +172,12 @@
                                                                                 <rect key="frame" x="0.0" y="0.0" width="130.5" height="130.5"/>
                                                                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                                             </imageView>
-                                                                            <button opaque="NO" tag="3" contentMode="scaleAspectFill" contentHorizontalAlignment="fill" contentVerticalAlignment="fill" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="mLD-q9-gpk">
+                                                                            <button opaque="NO" tag="4" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="mLD-q9-gpk">
                                                                                 <rect key="frame" x="0.0" y="0.0" width="130.5" height="130.5"/>
                                                                                 <state key="normal" title="Button"/>
                                                                                 <buttonConfiguration key="configuration" style="plain" image="Plus"/>
                                                                                 <connections>
-                                                                                    <action selector="touchToInsertImage:" destination="BYZ-38-t0r" eventType="touchUpInside" id="tqh-UQ-JuY"/>
+                                                                                    <action selector="touchToInsertImage:" destination="BYZ-38-t0r" eventType="touchUpInside" id="cIY-9f-1e7"/>
                                                                                 </connections>
                                                                             </button>
                                                                         </subviews>
@@ -282,16 +282,16 @@
                         <outlet property="buttonTwoUpTwoBottom" destination="btH-9N-zIU" id="4Uv-Ae-dPT"/>
                         <outlet property="deletedViewBottom" destination="xDy-yj-Dc2" id="S18-aU-P8z"/>
                         <outlet property="deletedViewUp" destination="vnX-Uc-Rip" id="1iB-UE-bWB"/>
-                        <outlet property="imageBottomLeft" destination="kOC-dH-Gjr" id="QbM-P8-ffl"/>
-                        <outlet property="imageBottomRight" destination="0pl-6J-OXK" id="xh2-JY-3sv"/>
-                        <outlet property="imageUpLeft" destination="AS5-Rk-JN8" id="JyS-46-tjd"/>
-                        <outlet property="imageUpRight" destination="N39-6d-hCI" id="dmI-Yq-YRQ"/>
                         <outlet property="swipeLabel" destination="nhr-NX-tdl" id="tME-aJ-iz4"/>
                         <outlet property="viewGrid" destination="CaJ-C2-6Bd" id="rZg-KR-tBs"/>
-                        <outletCollection property="buttonsInsertImage" destination="5d6-7c-44R" collectionClass="NSMutableArray" id="XlY-BQ-PJW"/>
-                        <outletCollection property="buttonsInsertImage" destination="9XE-2M-iys" collectionClass="NSMutableArray" id="r7Z-74-Wpo"/>
-                        <outletCollection property="buttonsInsertImage" destination="mLD-q9-gpk" collectionClass="NSMutableArray" id="fzd-v6-avg"/>
-                        <outletCollection property="buttonsInsertImage" destination="WzK-kf-x53" collectionClass="NSMutableArray" id="ZQ4-og-lVF"/>
+                        <outletCollection property="caseInsertImage" destination="AS5-Rk-JN8" collectionClass="NSMutableArray" id="7YT-Ps-kWz"/>
+                        <outletCollection property="caseInsertImage" destination="N39-6d-hCI" collectionClass="NSMutableArray" id="BGe-hJ-wSF"/>
+                        <outletCollection property="caseInsertImage" destination="kOC-dH-Gjr" collectionClass="NSMutableArray" id="HlE-OD-nNT"/>
+                        <outletCollection property="caseInsertImage" destination="0pl-6J-OXK" collectionClass="NSMutableArray" id="X8F-Pu-nqu"/>
+                        <outletCollection property="buttonsInsertImage" destination="5d6-7c-44R" collectionClass="NSMutableArray" id="Th7-iD-mto"/>
+                        <outletCollection property="buttonsInsertImage" destination="9XE-2M-iys" collectionClass="NSMutableArray" id="UZ5-iX-ez1"/>
+                        <outletCollection property="buttonsInsertImage" destination="WzK-kf-x53" collectionClass="NSMutableArray" id="PJ5-t2-yZD"/>
+                        <outletCollection property="buttonsInsertImage" destination="mLD-q9-gpk" collectionClass="NSMutableArray" id="I89-ZI-8Fi"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>

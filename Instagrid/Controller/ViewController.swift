@@ -25,17 +25,15 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate,
 
         // create a new image view for the grid
     var editingImage: UIImageView!
+    var currentIndex = 0
 
         // add swipe label
     @IBOutlet weak var swipeLabel: UILabel!
 
         // add identical buttons and identical images view of the grid
     @IBOutlet var buttonsInsertImage: [UIButton]!
-    var currentNumberButton = 0
-    @IBOutlet weak var imageUpLeft: UIImageView!
-    @IBOutlet weak var imageUpRight: UIImageView!
-    @IBOutlet weak var imageBottomLeft: UIImageView!
-    @IBOutlet weak var imageBottomRight: UIImageView!
+    @IBOutlet var caseInsertImage: [UIImageView]!
+    var numberButtonSelected = 0
 
         // add the global view grid
     @IBOutlet weak var viewGrid: UIView!
@@ -87,8 +85,6 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate,
 
     override func viewDidLoad() {
         super.viewDidLoad()
-            //receive the notification when the grid is completed
-        NotificationCenter.default.addObserver(self, selector: #selector(imageLoaded), name: .didLoadImage, object: nil)
 
             // animation logoScreen
         view.addSubview(backgroundGradient)
@@ -99,10 +95,7 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate,
         buttonFrontBack(name: buttonTwoUpTwoBottom, imageCheck: "Layout-3-check")
 
             // add round corner for all the UIImageView
-        roundCorner(imageUpLeft)
-        roundCorner(imageUpRight)
-        roundCorner(imageBottomLeft)
-        roundCorner(imageBottomRight)
+        roundCornerForImageView()
 
             // swipe for edit background color
         let swipeRight = UISwipeGestureRecognizer(target: self, action: #selector(swipeGestureColor(_:)))
@@ -117,10 +110,6 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate,
         // start new grid after share the screenshot template with the swipe
     private func startNewGrid() {
         instaGrid.newGrid()
-    }
-
-    @objc func imageLoaded(button number: Int) {
-        buttonsInsertImage[currentNumberButton].setImage(UIImage(named: "empty"), for: .normal)
     }
 
         // swipe and save the grid (swipe up or swipe left according to orientation portrait or lanscape)
@@ -159,7 +148,7 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate,
         print("total image for the template \(instaGrid.totalImagesMaxForTemplate)")
     }
 
-    func allButtonTemplate() {
+    private func allButtonTemplate() {
         deletedViewUp.isHidden = false
         deletedViewBottom.isHidden = false
 
@@ -187,7 +176,7 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate,
     }
 
         // animation button template
-    func buttonFrontBack(name button: UIButton, imageCheck: String) {
+    private func buttonFrontBack(name button: UIButton, imageCheck: String) {
         button.setImage(UIImage(named: imageCheck), for: .normal)
         UIView.transition(with: button,
                           duration: 0.25,
@@ -201,7 +190,7 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate,
         // -------------------------------------------------------
 
         // animate with rotation and alpha the Instagrid logo
-    func logoInstagridRotation() {
+    private func logoInstagridRotation() {
             // integrate a rotation of 180°
         let rotationTransform = CGAffineTransform(rotationAngle: 180)
 
@@ -227,38 +216,28 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate,
         // MARK: buttons images
         // -------------------------------------------------------
 
-        // round corner the UIImageView
-    func roundCorner(_ image: UIImageView) {
-        image.layer.masksToBounds = true
-        image.layer.cornerRadius = 5
-        image.contentMode = .scaleAspectFill
+        // round corner of the cases of selected images 
+    private func roundCornerForImageView() {
+        caseInsertImage.forEach {
+            $0.layer.masksToBounds = true
+            $0.layer.cornerRadius = 5
+            $0.contentMode = .scaleAspectFill
+        }
     }
 
+        // push button to insert image in the case
     @IBAction func touchToInsertImage(_ sender: UIButton) {
-        let myButtonTag = sender.tag
-        print(sender.tag)
-        switch myButtonTag {
-            case 0:
-                currentNumberButton = 0
-                editingImage = imageUpLeft
-                print("imageUpLeft")
-            case 1:
-                currentNumberButton = 1
-                editingImage = imageUpRight
-                print("imageUpRight")
-            case 2:
-                currentNumberButton = 2
-                editingImage = imageBottomLeft
-                print("imageBottomLeft")
-            case 3:
-                currentNumberButton = 3
-                editingImage = imageBottomRight
-                print("imageBottomRight")
-            default:
-                print("no photo")
-        }
+        numberButtonSelected = sender.tag - 1
+        editingImage = caseInsertImage[numberButtonSelected]
         chooseNewImage()
-        print("button selected : \(myButtonTag)")
+        print("button selected : \(numberButtonSelected)")
+    }
+
+        // modify image button after the loading image
+    func removePlusIfImageLoaded(_ buttonSelect: Int) {
+        if instaGrid.imagesForGrid.count == currentIndex && instaGrid.imagesForGrid.count != 0 {
+            buttonsInsertImage[buttonSelect].setImage(UIImage(named: "empty"), for: .normal)
+        }
     }
 
         // -------------------------------------------------------
@@ -323,6 +302,20 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate,
         present(alert, animated: true)
     }
 
+        // insert image in the grid
+    func insertChosenImage(_ chosenImage: UIImage) {
+        editingImage.image = chosenImage
+        editingImage.contentMode = .scaleAspectFill
+            // add new image in the array
+        instaGrid.addImageInTheGrid(editingImage)
+        self.currentIndex += 1
+        self.removePlusIfImageLoaded(self.numberButtonSelected)
+        print("image camera added")
+        print(instaGrid.imagesForGrid)
+        print("number images in grid \(self.instaGrid.imagesForGrid.count)")
+        print("complete: \(instaGrid.didCompleteGrid)")
+    }
+
         // recover the image and applied a fullscreen
     func imagePickerController(_ picker: UIImagePickerController,
                                didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey: Any]) {
@@ -330,14 +323,7 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate,
             print("No image found")
             return
         }
-        editingImage.image = chosenImage
-        editingImage.contentMode = .scaleAspectFill
-            // add new image in the array
-        instaGrid.addImageInTheGrid(editingImage)
-        print("image camera added")
-        print(instaGrid.imagesForGrid)
-        print("number images in grid \(self.instaGrid.imagesForGrid.count)")
-        print("complete: \(instaGrid.didCompleteGrid)")
+        insertChosenImage(chosenImage)
 
         dismiss(animated: true)
     }
@@ -362,15 +348,9 @@ extension ViewController: PHPickerViewControllerDelegate {
             let previousImage = editingImage.image
             itemProvider.loadObject(ofClass: UIImage.self) { [weak self] image, error in
                 DispatchQueue.main.sync {
-                    guard let self = self, let image = image as? UIImage,
+                    guard let self = self, let chosenImage = image as? UIImage,
                           self.editingImage.image == previousImage else { return }
-                    self.editingImage.image = image
-                        // add new image in the array
-                    self.instaGrid.addImageInTheGrid(self.editingImage)
-                    print("image library added")
-                    print(self.instaGrid.imagesForGrid)
-                    print("number images in grid \(self.instaGrid.imagesForGrid.count)")
-                    print("complete: \(self.instaGrid.didCompleteGrid)")
+                    self.insertChosenImage(chosenImage)
                 }
             }
         }
