@@ -114,12 +114,12 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate,
 
         // swipe and save the grid (swipe up or swipe left according to orientation portrait or lanscape)
     func swipeShareInstagrid() {
-        if traitCollection.verticalSizeClass == .regular && traitCollection.horizontalSizeClass == .compact {
+        if traitCollection.verticalSizeClass == .regular {
             let swipeToShare = UISwipeGestureRecognizer(target: self, action: #selector(swipeGestureShare(_:)))
             swipeToShare.direction = .up
             self.view.addGestureRecognizer(swipeToShare)
             swipeLabel.text = "Swipe up to share"
-        } else if traitCollection.verticalSizeClass == .compact && traitCollection.horizontalSizeClass == .regular {
+        } else if traitCollection.verticalSizeClass == .compact {
             let swipeToShare = UISwipeGestureRecognizer(target: self, action: #selector(swipeGestureShare(_:)))
             swipeToShare.direction = .left
             self.view.addGestureRecognizer(swipeToShare)
