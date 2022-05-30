@@ -98,18 +98,39 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate,
         roundCornerForImageView()
 
             // swipe for edit background color
-        let swipeRight = UISwipeGestureRecognizer(target: self, action: #selector(swipeGestureColor(_:)))
-        swipeRight.direction = .right
-        self.view.addGestureRecognizer(swipeRight)
+//        let swipeRight = UISwipeGestureRecognizer(target: self, action: #selector(swipeGestureColor(_:)))
+//        swipeRight.direction = .right
+//        self.view.addGestureRecognizer(swipeRight)
 
+        swipeDirection("right")
         swipeShareInstagrid()
+
         print("initial orientation up \(swipeShareInstagrid())")
+
+    }
+
+    func swipeDirection(_ direction: String) {
+        if direction == "right" {
+            let swipeRight = UISwipeGestureRecognizer(target: self, action: #selector(swipeGestureColor(_:)))
+            swipeRight.direction = .right
+            self.view.addGestureRecognizer(swipeRight)
+        }
 
     }
 
         // start new grid after share the screenshot template with the swipe
     private func startNewGrid() {
         instaGrid.newGrid()
+        reset()
+    }
+
+    private func reset() {
+        instaGrid.imagesForGrid.removeAll()
+        print("count the grid: \(instaGrid.imagesForGrid)")
+        instaGrid.totalImagesMaxForTemplate = 4
+        instaGrid.currentTemplate = .twoUpTwoBottom
+        instaGrid.backgroundColorOfTHeFrame = #colorLiteral(red: 0.05632288009, green: 0.396702528, blue: 0.5829991102, alpha: 1)
+        buttonFrontBack(name: buttonTwoUpTwoBottom, imageCheck: "Layout-3-check")
     }
 
         // swipe and save the grid (swipe up or swipe left according to orientation portrait or lanscape)
@@ -246,12 +267,18 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate,
         // swipe gesture to share the grid
     @objc func swipeGestureShare(_ gesture: UISwipeGestureRecognizer) {
             // if swipe up or left share the instagrid and begin a new grid
-            if gesture.direction == .up || gesture.direction == .left {
-                let imageToShare = viewGrid.screenshot()
-                print("to infinity and beyond! Up! (or left) and share the photo")
-                let shareController = UIActivityViewController(activityItems: [imageToShare], applicationActivities: nil)
-                present(shareController, animated: true, completion: nil)
-                startNewGrid()
+        if gesture.direction == .up || gesture.direction == .left {
+            let imageToShare = viewGrid.screenshot()
+            print("to infinity and beyond! Up! (or left) and share the photo")
+            let shareController = UIActivityViewController(activityItems: [imageToShare], applicationActivities: nil)
+            shareController.completionWithItemsHandler = { (activityType: UIActivity.ActivityType?, completed: Bool, arrayReturnedItems: [Any]?, error: Error?) in
+                guard completed else { return }
+                print("share completed")
+
+                    // create a new empty grid
+                self.startNewGrid()
+            }
+            present(shareController, animated: true, completion: nil)
         }
     }
 
@@ -340,6 +367,7 @@ extension ViewController: PHPickerViewControllerDelegate {
         if let sheet = pickerPH.sheetPresentationController {
             sheet.animateChanges {
                 sheet.selectedDetentIdentifier = .medium
+                sheet.preferredCornerRadius = 30.0
             }
         }
 
