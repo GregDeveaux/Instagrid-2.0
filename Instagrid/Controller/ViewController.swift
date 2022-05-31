@@ -125,12 +125,13 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate,
     }
 
     private func reset() {
-        instaGrid.imagesForGrid.removeAll()
+        caseInsertImage.removeAll()
         print("count the grid: \(instaGrid.imagesForGrid)")
+        print("count the grid: \(String(describing: caseInsertImage))")
         instaGrid.totalImagesMaxForTemplate = 4
+        viewGrid.backgroundColor = #colorLiteral(red: 0.05632288009, green: 0.396702528, blue: 0.5829991102, alpha: 1)
         instaGrid.currentTemplate = .twoUpTwoBottom
-        instaGrid.backgroundColorOfTHeFrame = #colorLiteral(red: 0.05632288009, green: 0.396702528, blue: 0.5829991102, alpha: 1)
-        buttonFrontBack(name: buttonTwoUpTwoBottom, imageCheck: "Layout-3-check")
+        allButtonTemplate()
     }
 
         // swipe and save the grid (swipe up or swipe left according to orientation portrait or lanscape)
