@@ -25,6 +25,7 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate,
 
         // create a new image view for the grid
     var editingImage: UIImageView!
+        // used to
     var currentIndex = 0
 
         // add swipe label
@@ -35,7 +36,7 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate,
     @IBOutlet var caseInsertImage: [UIImageView]!
     var numberButtonSelected = 0
 
-        // add the global view grid
+        // add the global view grid for the interaction with border color
     @IBOutlet weak var viewGrid: UIView!
 
         // add buttons template
@@ -46,6 +47,10 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate,
         // view deleted using templates buttons
     @IBOutlet weak var deletedViewBottom: UIView!
     @IBOutlet weak var deletedViewUp: UIView!
+
+        // -------------------------------------------------------
+        // MARK: pickers image and camera
+        // -------------------------------------------------------
 
         // create a picker controller to load the images from camera
     var pickerUI: UIImagePickerController {
@@ -76,12 +81,9 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate,
         return pickerPH
     }
 
-    override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
-        super.traitCollectionDidChange(previousTraitCollection)
-        swipeShareInstagrid()
-
-         print("++++++++++++++++++++++++++++++++ Trait collection changed ++++++++++++++++++++++++++++++++")
-     }
+        // -------------------------------------------------------
+        // MARK: viewDidLoad
+        // -------------------------------------------------------
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -97,26 +99,34 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate,
             // add round corner for all the UIImageView
         roundCornerForImageView()
 
-            // swipe for edit background color
-//        let swipeRight = UISwipeGestureRecognizer(target: self, action: #selector(swipeGestureColor(_:)))
-//        swipeRight.direction = .right
-//        self.view.addGestureRecognizer(swipeRight)
+            //add different swipes action
+        swipeDirection(.right, name: "swipeRightColor", action: #selector(swipeGestureColor(_:)))
+        swipeDirection(.up, name: "swipeUpShare", action: #selector(swipeGestureShare(_:)))
+        swipeDirection(.left, name: "swipeLeftShare", action: #selector(swipeGestureShare(_:)))
 
-        swipeDirection("right")
         swipeShareInstagrid()
 
         print("initial orientation up \(swipeShareInstagrid())")
 
     }
 
-    func swipeDirection(_ direction: String) {
-        if direction == "right" {
-            let swipeRight = UISwipeGestureRecognizer(target: self, action: #selector(swipeGestureColor(_:)))
-            swipeRight.direction = .right
-            self.view.addGestureRecognizer(swipeRight)
-        }
 
-    }
+        // -------------------------------------------------------
+        // MARK: iPhone orientation change
+        // -------------------------------------------------------
+
+        // immediately the orientation iPhone changes rewrite label and modify direction swipe
+    override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
+        super.traitCollectionDidChange(previousTraitCollection)
+        swipeShareInstagrid()
+
+         print("++++++++++++++++++++++++++++++++ Trait collection changed ++++++++++++++++++++++++++++++++")
+     }
+
+
+        // -------------------------------------------------------
+        // MARK: rest grid
+        // -------------------------------------------------------
 
         // start new grid after share the screenshot template with the swipe
     private func startNewGrid() {
@@ -125,27 +135,89 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate,
     }
 
     private func reset() {
-        caseInsertImage.removeAll()
+        instaGrid.imagesForGrid.removeAll()
+            // substitute the image by empty image
+        caseInsertImage.forEach {
+            $0.image = nil
+        }
+            // reinit the currentIndex
+        currentIndex = 0
+
+            // reveal the "plus" of the buttons
+        buttonsInsertImage.forEach {
+            $0.setImage(UIImage(named: "Plus"), for: .normal)
+        }
         print("count the grid: \(instaGrid.imagesForGrid)")
         print("count the grid: \(String(describing: caseInsertImage))")
         instaGrid.totalImagesMaxForTemplate = 4
-        viewGrid.backgroundColor = #colorLiteral(red: 0.05632288009, green: 0.396702528, blue: 0.5829991102, alpha: 1)
+        viewGrid.backgroundColor = instaGrid.backgroundColorOfTHeFrame
         instaGrid.currentTemplate = .twoUpTwoBottom
         allButtonTemplate()
     }
 
+        // -------------------------------------------------------
+        // MARK: swipe to share the final screenshot
+        // -------------------------------------------------------
+
+        // add function to multiply swipes action and direction
+    private func swipeDirection(_ direction: UISwipeGestureRecognizer.Direction, name swipe: String, action: Selector?) {
+        let swipe = UISwipeGestureRecognizer(target: self, action: action)
+        swipe.direction = direction
+        self.view.addGestureRecognizer(swipe)
+    }
+
         // swipe and save the grid (swipe up or swipe left according to orientation portrait or lanscape)
     func swipeShareInstagrid() {
-//        guard instaGrid.didCompleteGrid else { return }
-        let swipeToShare = UISwipeGestureRecognizer(target: self, action: #selector(swipeGestureShare(_:)))
         if traitCollection.verticalSizeClass == .regular {
-            swipeToShare.direction = .up
+            swipeDirection(.up, name: "swipeUpShare", action: #selector(swipeGestureShare(_:)))
             swipeLabel.text = "Swipe up to share"
         } else if traitCollection.verticalSizeClass == .compact {
-            swipeToShare.direction = .left
+            swipeDirection(.left, name: "swipeLeftShare", action: #selector(swipeGestureShare(_:)))
             swipeLabel.text = "Swipe left to share"
         }
-        self.view.addGestureRecognizer(swipeToShare)
+    }
+
+        // swipe gesture to share the grid
+    @objc func swipeGestureShare(_ gesture: UISwipeGestureRecognizer) {
+            // if swipe up or left share the instagrid and begin a new grid
+        if (gesture.direction == .up && traitCollection.verticalSizeClass == .regular) || (gesture.direction == .left && traitCollection.verticalSizeClass == .compact) {
+            guard instaGrid.didCompleteGrid else { return }
+            let imageToShare = viewGrid.screenshot()
+            print("to infinity and beyond! Up! (or left) and share the photo")
+            let shareController = UIActivityViewController(activityItems: [imageToShare], applicationActivities: nil)
+            shareController.completionWithItemsHandler = { (activityType: UIActivity.ActivityType?, completed: Bool, arrayReturnedItems: [Any]?, error: Error?) in
+                guard completed else { return }
+                print("share completed")
+
+                    // create a new empty grid
+                self.startNewGrid()
+            }
+            shareController.isModalInPresentation = true
+            present(shareController, animated: true, completion: nil)
+        }
+    }
+
+    @objc func swipeGestureColor(_ gesture: UISwipeGestureRecognizer) {
+        if gesture.direction == .right {
+            print("Right ]<-[ color")
+            selectorColorForBorderFrame()
+        }
+    }
+
+        // -------------------------------------------------------
+        // MARK: border frame color
+        // -------------------------------------------------------
+
+    private func selectorColorForBorderFrame() {
+        let pickerColor = UIColorPickerViewController()
+        pickerColor.delegate = self
+        present(pickerColor, animated: true, completion: nil)
+    }
+
+    func colorPickerViewControllerDidFinish(_ viewController: UIColorPickerViewController) {
+        let color = viewController.selectedColor
+        viewGrid.backgroundColor = color
+        print("Color modified")
     }
 
         // -------------------------------------------------------
@@ -259,51 +331,6 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate,
         if instaGrid.imagesForGrid.count == currentIndex && instaGrid.imagesForGrid.count != 0 {
             buttonsInsertImage[buttonSelect].setImage(UIImage(named: "empty"), for: .normal)
         }
-    }
-
-        // -------------------------------------------------------
-        // MARK: swipe to share the final screenshot
-        // -------------------------------------------------------
-
-        // swipe gesture to share the grid
-    @objc func swipeGestureShare(_ gesture: UISwipeGestureRecognizer) {
-            // if swipe up or left share the instagrid and begin a new grid
-        if gesture.direction == .up || gesture.direction == .left {
-            let imageToShare = viewGrid.screenshot()
-            print("to infinity and beyond! Up! (or left) and share the photo")
-            let shareController = UIActivityViewController(activityItems: [imageToShare], applicationActivities: nil)
-            shareController.completionWithItemsHandler = { (activityType: UIActivity.ActivityType?, completed: Bool, arrayReturnedItems: [Any]?, error: Error?) in
-                guard completed else { return }
-                print("share completed")
-
-                    // create a new empty grid
-                self.startNewGrid()
-            }
-            present(shareController, animated: true, completion: nil)
-        }
-    }
-
-    @objc func swipeGestureColor(_ gesture: UISwipeGestureRecognizer) {
-        if gesture.direction == .right {
-            print("Right ]<-[ color")
-            selectorColorForBorderFrame()
-        }
-    }
-
-        // -------------------------------------------------------
-        // MARK: border frame color
-        // -------------------------------------------------------
-
-    private func selectorColorForBorderFrame() {
-        let pickerColor = UIColorPickerViewController()
-        pickerColor.delegate = self
-        present(pickerColor, animated: true, completion: nil)
-    }
-
-    func colorPickerViewControllerDidFinish(_ viewController: UIColorPickerViewController) {
-        let color = viewController.selectedColor
-        viewGrid.backgroundColor = color
-        print("Color modified")
     }
 
         // -------------------------------------------------------
