@@ -2,7 +2,7 @@
 //  ViewController.swift
 //  Instagrid
 //
-//  Created by Greg-Mini on 12/05/2022.
+//  Created by Gregory Deveaux on 12/05/2022.
 //
 
 import UIKit
@@ -99,6 +99,9 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate,
             // add round corner for all the UIImageView
         roundCornerForImageView()
 
+            // add shadow in the blue (color) border
+        shadowFrame()
+
             //add different swipes action
         swipeDirection(.right, name: "swipeRightColor", action: #selector(swipeGestureColor(_:)))
         swipeDirection(.up, name: "swipeUpShare", action: #selector(swipeGestureShare(_:)))
@@ -125,7 +128,7 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate,
 
 
         // -------------------------------------------------------
-        // MARK: rest grid
+        // MARK: reset grid
         // -------------------------------------------------------
 
         // start new grid after share the screenshot template with the swipe
@@ -192,7 +195,6 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate,
                     // create a new empty grid
                 self.startNewGrid()
             }
-            shareController.isModalInPresentation = true
             present(shareController, animated: true, completion: nil)
         }
     }
@@ -208,9 +210,18 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate,
         // MARK: border frame color
         // -------------------------------------------------------
 
+    private func shadowFrame() {
+        viewGrid.layer.shadowColor = #colorLiteral(red: 0, green: 0, blue: 0, alpha: 1)
+        viewGrid.layer.shadowOffset = CGSize(width: 3, height: 3)
+        viewGrid.layer.masksToBounds = false
+        viewGrid.layer.shadowOpacity = 0.5
+        viewGrid.layer.shadowRadius = 1.2
+    }
+
     private func selectorColorForBorderFrame() {
         let pickerColor = UIColorPickerViewController()
         pickerColor.delegate = self
+        pickerColor.supportsAlpha = false
         present(pickerColor, animated: true, completion: nil)
     }
 
@@ -396,6 +407,7 @@ extension ViewController: PHPickerViewControllerDelegate {
             sheet.animateChanges {
                 sheet.selectedDetentIdentifier = .medium
                 sheet.preferredCornerRadius = 30.0
+                sheet.prefersScrollingExpandsWhenScrolledToEdge = false
             }
         }
 
