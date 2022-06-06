@@ -25,15 +25,19 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate,
 
         // create a new image view for the grid
     var editingImage: UIImageView!
-        // used to
+
     var currentIndex = 0
 
         // add swipe label
     @IBOutlet weak var swipeLabel: UILabel!
 
         // add identical buttons and identical images view of the grid
+    
     @IBOutlet var buttonsInsertImage: [UIButton]!
+    
     @IBOutlet var caseInsertImage: [UIImageView]!
+
+
     var numberButtonSelected = 0
 
         // add the global view grid for the interaction with border color
