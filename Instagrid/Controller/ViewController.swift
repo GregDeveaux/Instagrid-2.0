@@ -103,9 +103,9 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate,
         shadowFrame()
 
             //add different swipes action
-        swipeDirection(.right, name: "swipeRightColor", action: #selector(swipeGestureColor(_:)))
-        swipeDirection(.up, name: "swipeUpShare", action: #selector(swipeGestureShare(_:)))
-        swipeDirection(.left, name: "swipeLeftShare", action: #selector(swipeGestureShare(_:)))
+        swipeDirection(.right, action: #selector(swipeGestureColor(_:)))
+        swipeDirection(.up, action: #selector(swipeGestureShare(_:)))
+        swipeDirection(.left, action: #selector(swipeGestureShare(_:)))
 
         swipeShareInstagrid()
 
@@ -163,7 +163,7 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate,
         // -------------------------------------------------------
 
         // add function to multiply swipes action and direction
-    private func swipeDirection(_ direction: UISwipeGestureRecognizer.Direction, name swipe: String, action: Selector?) {
+    private func swipeDirection(_ direction: UISwipeGestureRecognizer.Direction,action: Selector?) {
         let swipe = UISwipeGestureRecognizer(target: self, action: action)
         swipe.direction = direction
         self.view.addGestureRecognizer(swipe)
@@ -172,10 +172,10 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate,
         // swipe and save the grid (swipe up or swipe left according to orientation portrait or lanscape)
     func swipeShareInstagrid() {
         if traitCollection.verticalSizeClass == .regular {
-            swipeDirection(.up, name: "swipeUpShare", action: #selector(swipeGestureShare(_:)))
+            swipeDirection(.up, action: #selector(swipeGestureShare(_:)))
             swipeLabel.text = "Swipe up to share"
         } else if traitCollection.verticalSizeClass == .compact {
-            swipeDirection(.left, name: "swipeLeftShare", action: #selector(swipeGestureShare(_:)))
+            swipeDirection(.left, action: #selector(swipeGestureShare(_:)))
             swipeLabel.text = "Swipe left to share"
         }
     }
