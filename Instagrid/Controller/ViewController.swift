@@ -18,6 +18,7 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate,
         logoInstagrid.center = self.view.center
         return logoInstagrid
     }()
+
     let backgroundGradient = UIImageView(image: UIImage(named: "BackgroundLaunchScreen"))
 
         // create a Instagrid
@@ -32,7 +33,6 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate,
     @IBOutlet weak var swipeLabel: UILabel!
 
         // add identical buttons and identical images view of the grid
-    
     @IBOutlet var buttonsInsertImage: [UIButton]!
     
     @IBOutlet var caseInsertImage: [UIImageView]!
