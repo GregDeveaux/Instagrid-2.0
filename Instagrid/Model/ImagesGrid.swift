@@ -24,8 +24,8 @@ class InstaGrid {
     var backgroundColorOfTHeFrame: UIColor
 
     init() {
-        self.currentTemplate = .twoUpTwoBottom
-        self.totalImagesMaxForTemplate = 4
+        self.currentTemplate = .twoUpOneBottom
+        self.totalImagesMaxForTemplate = 3
         self.backgroundColorOfTHeFrame = #colorLiteral(red: 0.05632288009, green: 0.396702528, blue: 0.5829991102, alpha: 1)
     }
 
@@ -34,15 +34,27 @@ class InstaGrid {
         imagesForGrid.count >= totalImagesMaxForTemplate
     }
 
+    func templateSetup() {
+        switch currentTemplate {
+            case .oneUpTwoBottom:
+                totalImagesMaxForTemplate = 3
+            case .twoUpOneBottom:
+                totalImagesMaxForTemplate = 3
+            case .twoUpTwoBottom:
+                totalImagesMaxForTemplate = 4
+        }
+    }
+
         // add image in the grid and check that it is completely loaded (then hide the button +)
     func addImageInTheGrid(image: UIImageView) {
         imagesForGrid.append(image)
     }
 
-        // after the swipe, we again begin the new images grid
+        // begin the new images grid
     func newGrid() {
         imagesForGrid.removeAll()
-        currentTemplate = .twoUpTwoBottom
+        currentTemplate = .twoUpOneBottom
+        templateSetup()
         backgroundColorOfTHeFrame = #colorLiteral(red: 0.05632288009, green: 0.396702528, blue: 0.5829991102, alpha: 1)
     }
 }

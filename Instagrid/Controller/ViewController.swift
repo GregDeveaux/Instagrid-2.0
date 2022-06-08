@@ -19,7 +19,11 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate,
         return logoInstagrid
     }()
 
-    let backgroundGradient = UIImageView(image: UIImage(named: "BackgroundLaunchScreen"))
+    lazy var backgroundGradient: UIImageView = {
+        let backgroundGradient = UIImageView(image: UIImage(named: "BackgroundLaunchScreen"))
+        backgroundGradient.frame = CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height)
+        return backgroundGradient
+    }()
 
         // create a Instagrid
     let instaGrid = InstaGrid()
@@ -37,7 +41,6 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate,
     
     @IBOutlet var caseInsertImage: [UIImageView]!
 
-
     var numberButtonSelected = 0
 
         // add the global view grid for the interaction with border color
@@ -52,6 +55,7 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate,
     @IBOutlet weak var deletedViewBottom: UIView!
     @IBOutlet weak var deletedViewUp: UIView!
 
+
         // -------------------------------------------------------
         // MARK: pickers image and camera
         // -------------------------------------------------------
@@ -59,13 +63,10 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate,
         // create a picker controller to load the images from camera
     var pickerUI: UIImagePickerController {
         let pickerUI = UIImagePickerController()
-            // image picked can to modify
         pickerUI.allowsEditing = true
-            // choose the type camera to take the square photo in the viewController "picker"
         pickerUI.sourceType = .camera
         pickerUI.cameraCaptureMode = .photo
         pickerUI.modalPresentationStyle = .currentContext
-            // picker delegate for UIImagePicker want the messages to come this class
         pickerUI.delegate = self
         return pickerUI
     }
@@ -75,10 +76,9 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate,
         var configuration = PHPickerConfiguration(photoLibrary: .shared())
         configuration.filter = .images
         let pickerPH = PHPickerViewController(configuration: configuration)
-            // picker delegate for PHPickerView want the messages to come this class
         pickerPH.delegate = self
+
         if let sheet = pickerPH.sheetPresentationController {
-                // open sheet until the middle screen or whole screen
             sheet.detents = [.medium(), .large()]
             sheet.preferredCornerRadius = 30
         }
@@ -98,23 +98,14 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate,
         logoInstagridRotation()
 
             // add button active of the first grid
-        buttonFrontBack(name: buttonTwoUpTwoBottom, imageCheck: "Layout-3-check")
+        allButtonTemplate()
 
-            // add round corner for all the UIImageView
+            // design frame and cases
         roundCornerForImageView()
-
-            // add shadow in the blue (color) border
         shadowFrame()
 
-            //add different swipes action
-        swipeDirection(.right, action: #selector(swipeGestureColor(_:)))
-        swipeDirection(.up, action: #selector(swipeGestureShare(_:)))
-        swipeDirection(.left, action: #selector(swipeGestureShare(_:)))
-
-        swipeShareInstagrid()
-
-        print("initial orientation up \(swipeShareInstagrid())")
-
+            // add swipes
+        swipesInstagrid()
     }
 
 
@@ -125,10 +116,8 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate,
         // immediately the orientation iPhone changes rewrite label and modify direction swipe
     override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
         super.traitCollectionDidChange(previousTraitCollection)
-        swipeShareInstagrid()
-
-         print("++++++++++++++++++++++++++++++++ Trait collection changed ++++++++++++++++++++++++++++++++")
-     }
+        swipesInstagrid()
+    }
 
 
         // -------------------------------------------------------
@@ -136,29 +125,21 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate,
         // -------------------------------------------------------
 
         // start new grid after share the screenshot template with the swipe
-    private func startNewGrid() {
-        instaGrid.newGrid()
-        reset()
-    }
-
     private func reset() {
+        currentIndex = 0
+
+        instaGrid.newGrid()
         instaGrid.imagesForGrid.removeAll()
-            // substitute the image by empty image
+        
         caseInsertImage.forEach {
             $0.image = nil
         }
-            // reinit the currentIndex
-        currentIndex = 0
 
-            // reveal the "plus" of the buttons
         buttonsInsertImage.forEach {
             $0.setImage(UIImage(named: "Plus"), for: .normal)
         }
-        print("count the grid: \(instaGrid.imagesForGrid)")
-        print("count the grid: \(String(describing: caseInsertImage))")
-        instaGrid.totalImagesMaxForTemplate = 4
+
         viewGrid.backgroundColor = instaGrid.backgroundColorOfTHeFrame
-        instaGrid.currentTemplate = .twoUpTwoBottom
         allButtonTemplate()
     }
 
@@ -174,7 +155,9 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate,
     }
 
         // swipe and save the grid (swipe up or swipe left according to orientation portrait or lanscape)
-    func swipeShareInstagrid() {
+    func swipesInstagrid() {
+        swipeDirection(.right, action: #selector(swipeGestureColor(_:)))
+
         if traitCollection.verticalSizeClass == .regular {
             swipeDirection(.up, action: #selector(swipeGestureShare(_:)))
             swipeLabel.text = "Swipe up to share"
@@ -187,19 +170,62 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate,
         // swipe gesture to share the grid
     @objc func swipeGestureShare(_ gesture: UISwipeGestureRecognizer) {
             // if swipe up or left share the instagrid and begin a new grid
-        if (gesture.direction == .up && traitCollection.verticalSizeClass == .regular) || (gesture.direction == .left && traitCollection.verticalSizeClass == .compact) {
-            guard instaGrid.didCompleteGrid else { return }
-            let imageToShare = viewGrid.screenshot()
-            print("to infinity and beyond! Up! (or left) and share the photo")
-            let shareController = UIActivityViewController(activityItems: [imageToShare], applicationActivities: nil)
-            shareController.completionWithItemsHandler = { (activityType: UIActivity.ActivityType?, completed: Bool, arrayReturnedItems: [Any]?, error: Error?) in
-                guard completed else { return }
-                print("share completed")
+        if (gesture.direction == .up && traitCollection.verticalSizeClass == .regular)
+            || (gesture.direction == .left && traitCollection.verticalSizeClass == .compact) {
 
-                    // create a new empty grid
-                self.startNewGrid()
+            guard instaGrid.didCompleteGrid else { return }
+            animeGrid()
+
+            let imageToShare = viewGrid.screenshot()
+
+            let shareController = UIActivityViewController(activityItems: [imageToShare], applicationActivities: nil)
+            shareController.completionWithItemsHandler = { (activityType: UIActivity.ActivityType?,
+                                                            completed: Bool,
+                                                            arrayReturnedItems: [Any]?,
+                                                            error: Error?) in
+
+                guard completed else { return self.animeShareCancelled() }
+                    self.animeShareFinished()
+
+                if let shareError = error {
+                    self.animeShareFinished()
+                    print("error while sharing: \(shareError.localizedDescription)")
+                }
             }
+
             present(shareController, animated: true, completion: nil)
+        }
+    }
+
+    private func animeShareFinished() {
+        reset()
+        viewGrid.transform = .identity
+        viewGrid.transform = CGAffineTransform(scaleX: 0.01, y: 0.01)
+        UIView.animate(withDuration: 0.25,
+                       delay: 0,
+                       usingSpringWithDamping: 0.5,
+                       initialSpringVelocity: 0) {
+            self.viewGrid.transform = .identity
+        }
+    }
+
+    private func animeShareCancelled() {
+        UIView.animate(withDuration: 0.35,
+                       delay: 0,
+                       usingSpringWithDamping: 0.55,
+                       initialSpringVelocity: 0.2) {
+            self.viewGrid.transform = .identity
+        }
+    }
+
+
+    private func animeGrid() {
+        if traitCollection.verticalSizeClass == .regular {
+            UIView.animate(withDuration: 0.5, animations: {
+                self.viewGrid.transform = CGAffineTransform(translationX: 0, y: -self.view.frame.height) })
+        } else {
+            UIView.animate(withDuration: 0.5, animations: {
+                self.viewGrid.transform = CGAffineTransform(translationX: -self.view.frame.width, y: 0) })
         }
     }
 
@@ -218,7 +244,7 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate,
         viewGrid.layer.shadowColor = #colorLiteral(red: 0, green: 0, blue: 0, alpha: 1)
         viewGrid.layer.shadowOffset = CGSize(width: 3, height: 3)
         viewGrid.layer.masksToBounds = false
-        viewGrid.layer.shadowOpacity = 0.5
+        viewGrid.layer.shadowOpacity = 0.2
         viewGrid.layer.shadowRadius = 1.2
     }
 
@@ -243,17 +269,16 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate,
     @IBAction func templateOneUpTwoBottom(_ sender: UIButton) {
         instaGrid.currentTemplate = .oneUpTwoBottom
         allButtonTemplate()
-        print("total image for the template \(instaGrid.totalImagesMaxForTemplate)")
     }
+
     @IBAction func templateTwoUpOneBottom(_ sender: UIButton) {
         instaGrid.currentTemplate = .twoUpOneBottom
         allButtonTemplate()
-        print("total image for the template \(instaGrid.totalImagesMaxForTemplate)")
     }
+
     @IBAction func templateTwoUpTwoBottom(_ sender: UIButton) {
         instaGrid.currentTemplate = .twoUpTwoBottom
         allButtonTemplate()
-        print("total image for the template \(instaGrid.totalImagesMaxForTemplate)")
     }
 
     private func allButtonTemplate() {
@@ -266,21 +291,19 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate,
                 buttonFrontBack(name: buttonOneUpTwoBottom, imageCheck: "Layout-1-check")
                 buttonTwoUpOneBottom.setImage(UIImage(named: "Layout-2"), for: .normal)
                 buttonTwoUpTwoBottom.setImage(UIImage(named: "Layout-3"), for: .normal)
-                instaGrid.totalImagesMaxForTemplate = 3
 
             case .twoUpOneBottom:
                 deletedViewBottom.isHidden = true
                 buttonOneUpTwoBottom.setImage(UIImage(named: "Layout-1"), for: .normal)
                 buttonFrontBack(name: buttonTwoUpOneBottom, imageCheck: "Layout-2-check")
                 buttonTwoUpTwoBottom.setImage(UIImage(named: "Layout-3"), for: .normal)
-                instaGrid.totalImagesMaxForTemplate = 3
 
             case .twoUpTwoBottom:
                 buttonOneUpTwoBottom.setImage(UIImage(named: "Layout-1"), for: .normal)
                 buttonTwoUpOneBottom.setImage(UIImage(named: "Layout-2"), for: .normal)
                 buttonFrontBack(name: buttonTwoUpTwoBottom, imageCheck: "Layout-3-check")
-                instaGrid.totalImagesMaxForTemplate = 4
         }
+        instaGrid.templateSetup()
     }
 
         // animation button template
@@ -299,10 +322,8 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate,
 
         // animate with rotation and alpha the Instagrid logo
     private func logoInstagridRotation() {
-            // integrate a rotation of 180°
         let rotationTransform = CGAffineTransform(rotationAngle: 180)
 
-            // animate the logo with rebound
         UIImageView.animate(withDuration: 2,
                             delay: 0.8,
                             usingSpringWithDamping: 0.2,
@@ -311,7 +332,6 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate,
             self.logoInstagrid.transform = rotationTransform
         })
 
-            // then, the fake launchscreen disappears
         UIImageView.animate(withDuration: 0.5,
                             delay: 2.2,
                             animations: {
@@ -324,7 +344,7 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate,
         // MARK: buttons images
         // -------------------------------------------------------
 
-        // round corner of the cases of selected images 
+        // round corner of the cases of selected images
     private func roundCornerForImageView() {
         caseInsertImage.forEach {
             $0.layer.masksToBounds = true
@@ -338,11 +358,10 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate,
         numberButtonSelected = sender.tag - 1
         editingImage = caseInsertImage[numberButtonSelected]
         chooseNewImage()
-        print("button selected : \(numberButtonSelected)")
     }
 
         // modify image button after the loading image
-    func removePlusIfImageLoaded(_ buttonSelect: Int) {
+    private func removePlusIfImageLoaded(_ buttonSelect: Int) {
         if instaGrid.imagesForGrid.count == currentIndex && instaGrid.imagesForGrid.count != 0 {
             buttonsInsertImage[buttonSelect].setImage(UIImage(named: "empty"), for: .normal)
         }
@@ -357,13 +376,11 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate,
 
             // we shared photoLibrary for images
         alert.addAction(UIAlertAction(title: "Photo Gallery", style: .default, handler: { (_) in
-                // present new frame to select a photo in the library
             self.present(self.pickerPH, animated: true)
         }))
 
             // we shared photoLibrary for images
         alert.addAction(UIAlertAction(title: "Camera", style: .default, handler: { (_) in
-                // present new frame to take a photo with a camera
             self.present(self.pickerUI, animated: true)
         }))
 
@@ -372,17 +389,12 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate,
     }
 
         // insert image in the grid
-    func insertInGrid(the chosenImage: UIImage) {
+    private func insertInGrid(the chosenImage: UIImage) {
         editingImage.image = chosenImage
         editingImage.contentMode = .scaleAspectFill
-            // add new image in the array
         instaGrid.addImageInTheGrid(image: editingImage)
         self.currentIndex += 1
         self.removePlusIfImageLoaded(self.numberButtonSelected)
-        print("image camera added")
-        print(instaGrid.imagesForGrid)
-        print("number images in grid \(self.instaGrid.imagesForGrid.count)")
-        print("complete: \(instaGrid.didCompleteGrid)")
     }
 
         // recover the image and applied a fullscreen
@@ -398,7 +410,6 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate,
     }
 
     func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
-            // animate return to the view controller
         dismiss(animated: true)
     }
 }
@@ -406,7 +417,6 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate,
 extension ViewController: PHPickerViewControllerDelegate {
 
     func picker(_ picker: PHPickerViewController, didFinishPicking results: [PHPickerResult]) {
-
         if let sheet = pickerPH.sheetPresentationController {
             sheet.animateChanges {
                 sheet.selectedDetentIdentifier = .medium
