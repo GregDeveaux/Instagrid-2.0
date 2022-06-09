@@ -14,6 +14,7 @@
 		BC3D24B4282CF630005F7351 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = BC3D24B3282CF630005F7351 /* Assets.xcassets */; };
 		BC3D24B7282CF630005F7351 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = BC3D24B5282CF630005F7351 /* LaunchScreen.storyboard */; };
 		BC72A6E3282E5DCD000820A2 /* ImagesGrid.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC72A6E2282E5DCD000820A2 /* ImagesGrid.swift */; };
+		BCDC4E1828527D0700B25A47 /* UIView+extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCDC4E1728527D0700B25A47 /* UIView+extension.swift */; };
 		BCDCA503283983E400BCED87 /* ThirstySoftRegular.otf in Resources */ = {isa = PBXBuildFile; fileRef = BCDCA502283983E400BCED87 /* ThirstySoftRegular.otf */; };
 		BCDCA5052839840400BCED87 /* Delm-Medium.otf in Resources */ = {isa = PBXBuildFile; fileRef = BCDCA5042839840400BCED87 /* Delm-Medium.otf */; };
 /* End PBXBuildFile section */
@@ -28,6 +29,7 @@
 		BC3D24B6282CF630005F7351 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		BC3D24B8282CF630005F7351 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		BC72A6E2282E5DCD000820A2 /* ImagesGrid.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImagesGrid.swift; sourceTree = "<group>"; };
+		BCDC4E1728527D0700B25A47 /* UIView+extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIView+extension.swift"; sourceTree = "<group>"; };
 		BCDCA502283983E400BCED87 /* ThirstySoftRegular.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = ThirstySoftRegular.otf; sourceTree = "<group>"; };
 		BCDCA5042839840400BCED87 /* Delm-Medium.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Delm-Medium.otf"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -104,6 +106,7 @@
 			isa = PBXGroup;
 			children = (
 				BC3D24B0282CF630005F7351 /* Main.storyboard */,
+				BCDC4E1728527D0700B25A47 /* UIView+extension.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -181,6 +184,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				BCDC4E1828527D0700B25A47 /* UIView+extension.swift in Sources */,
 				BC72A6E3282E5DCD000820A2 /* ImagesGrid.swift in Sources */,
 				BC3D24AF282CF630005F7351 /* ViewController.swift in Sources */,
 				BC3D24AB282CF630005F7351 /* AppDelegate.swift in Sources */,
