@@ -118,7 +118,7 @@ class ViewController: UIViewController, UINavigationControllerDelegate {
         // -------------------------------------------------------
 
         // add function to multiply swipes action and direction
-    private func swipeDirection(_ direction: UISwipeGestureRecognizer.Direction,action: Selector?) {
+    private func swipeDirection(_ direction: UISwipeGestureRecognizer.Direction, action: Selector?) {
         let swipe = UISwipeGestureRecognizer(target: self, action: action)
         swipe.direction = direction
         self.view.addGestureRecognizer(swipe)
@@ -144,6 +144,7 @@ class ViewController: UIViewController, UINavigationControllerDelegate {
             || (gesture.direction == .left && traitCollection.verticalSizeClass == .compact) {
 
             guard instaGrid.didCompleteGrid else { return }
+
             animeGrid()
 
             let imageToShare = viewGrid.screenshot()
@@ -211,16 +212,6 @@ class ViewController: UIViewController, UINavigationControllerDelegate {
                 buttonFrontBack(name: buttonTwoUpTwoBottom, imageCheck: "Layout-3-check")
         }
         instaGrid.templateSetup()
-    }
-
-        // animation button template
-    private func buttonFrontBack(name button: UIButton, imageCheck: String) {
-        button.setImage(UIImage(named: imageCheck), for: .normal)
-        UIView.transition(with: button,
-                          duration: 0.25,
-                          options: UIView.AnimationOptions.transitionFlipFromLeft,
-                          animations: nil,
-                          completion: nil)
     }
 
 
@@ -310,20 +301,19 @@ class ViewController: UIViewController, UINavigationControllerDelegate {
     private func logoInstagridRotation() {
         let rotationTransform = CGAffineTransform(rotationAngle: 180)
 
-        UIImageView.animate(withDuration: 2,
-                            delay: 0.8,
+        UIImageView.animate(withDuration: 1.7,
+                            delay: 0.5,
                             usingSpringWithDamping: 0.2,
                             initialSpringVelocity: 0.1,
-                            animations: {
+                            options: .curveEaseInOut) {
             self.logoInstagrid.transform = rotationTransform
-        })
-
-        UIImageView.animate(withDuration: 0.5,
-                            delay: 2.2,
-                            animations: {
-            self.logoInstagrid.alpha = 0
-            self.backgroundGradient.alpha = 0
-        })
+        } completion: { finished in
+            UIImageView.animate(withDuration: 0.5,
+                                delay: 0.2) {
+                self.logoInstagrid.alpha = 0
+                self.backgroundGradient.alpha = 0
+            }
+        }
     }
 
     private func animeShareFinished() {
@@ -349,12 +339,21 @@ class ViewController: UIViewController, UINavigationControllerDelegate {
 
     private func animeGrid() {
         if traitCollection.verticalSizeClass == .regular {
-            UIView.animate(withDuration: 0.5, animations: {
-                self.viewGrid.transform = CGAffineTransform(translationX: 0, y: -self.view.frame.height) })
+            UIView.animate(withDuration: 0.5) {
+                self.viewGrid.transform = CGAffineTransform(translationX: 0, y: -self.view.frame.height) }
         } else {
-            UIView.animate(withDuration: 0.5, animations: {
-                self.viewGrid.transform = CGAffineTransform(translationX: -self.view.frame.width, y: 0) })
+            UIView.animate(withDuration: 0.5) {
+                self.viewGrid.transform = CGAffineTransform(translationX: -self.view.frame.width, y: 0) }
         }
+    }
+
+        // animation button template
+    private func buttonFrontBack(name button: UIButton, imageCheck: String) {
+        button.setImage(UIImage(named: imageCheck), for: .normal)
+        UIView.transition(with: button,
+                          duration: 0.25,
+                          options: UIView.AnimationOptions.transitionFlipFromLeft,
+                          animations: nil)
     }
 }
 
@@ -374,7 +373,7 @@ extension ViewController: PHPickerViewControllerDelegate {
 
         if let sheet = pickerPH.sheetPresentationController {
             sheet.detents = [.medium(), .large()]
-            sheet.preferredCornerRadius = 30
+            sheet.preferredCornerRadius = 25.0
         }
         return pickerPH
     }
@@ -383,7 +382,6 @@ extension ViewController: PHPickerViewControllerDelegate {
         if let sheet = pickerPH.sheetPresentationController {
             sheet.animateChanges {
                 sheet.selectedDetentIdentifier = .medium
-                sheet.preferredCornerRadius = 30.0
                 sheet.prefersScrollingExpandsWhenScrolledToEdge = false
             }
         }
